@@ -6,7 +6,6 @@ const path = require('path');
 const db = require('./db');
 const expressLayouts = require('express-ejs-layouts'); // חבילת עיצובים
 const helmet = require('helmet');
-123456
 const PORT = 5000;
 
 app.use((req, res, next) => {
