@@ -6,18 +6,8 @@ const path = require('path');
 const db = require('./db');
 const expressLayouts = require('express-ejs-layouts'); // חבילת עיצובים
 const helmet = require('helmet');
-
+123456
 const PORT = 5000;
-
-app.use(helmet({
-    contentSecurityPolicy: {
-        directives: {
-            defaultSrc: ["'self'"],
-            scriptSrc: ["'self'"],
-            styleSrc: ["'self'", "'unsafe-inline'"]
-        }
-    }
-}));
 
 app.use((req, res, next) => {
     res.setHeader("Content-Security-Policy", "default-src *; script-src * 'unsafe-inline' 'unsafe-eval'; style-src * 'unsafe-inline'; font-src *;");
@@ -57,10 +47,16 @@ app.use('/vehicles', vehicleRoutes);
 app.use('/appointments', appointmentRoutes);
 app.use('/users', userRoutes);
 app.use('/manager', managerRoutes);
-app.use('/customers', customerRoutes);
-app.use('/manager', managerRoutes);
 
-
+app.use(helmet({
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'self'"],
+            scriptSrc: ["'self'"],
+            styleSrc: ["'self'", "'unsafe-inline'"]
+        }
+    }
+}));
 
 app.get('/', (req, res) => {
     res.render('home', { title: "ברוכים הבאים למוסך מרכבת המשנה" });
