@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>לוח ניהול</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light text-center">
+    <div class="container mt-5">
+        <h1 class="text-success">🔧 לוח ניהול</h1>
+
+        <!-- 📊 סטטיסטיקות -->
+        <h2 class="mt-4">📊 סטטיסטיקות</h2>
+        <div class="card p-3 bg-white shadow-sm">
+            <p>👥 סה"כ לקוחות: <strong><%= stats ? stats.totalCustomers : 0 %></strong></p>
+            <p>🚗 סה"כ רכבים רשומים: <strong><%= stats ? stats.totalVehicles : 0 %></strong></p>
+            <p>📅 סה"כ תורים: <strong><%= stats ? stats.totalAppointments : 0 %></strong></p>
+            <p>🛠️ השירות הפופולרי ביותר: <strong><%= stats ? stats.mostCommonService : "לא זמין" %></strong></p>
+        </div>
+
+        <h2 class="mt-4">➕ הוספת לקוח</h2>
+        <form id="addCustomerForm" class="text-center w-50 mx-auto">
+            <input id="customerName" type="text" placeholder="שם מלא" class="form-control mb-2" required>
+            <input id="customerPhone" type="text" placeholder="טלפון (10 ספרות)" class="form-control mb-2" required pattern="[0-9]{10}">
+            <button type="submit" class="btn btn-success w-100">✅ הוסף לקוח</button>
+        </form>
+
+        <h2 class="mt-4">👥 רשימת לקוחות</h2>
+        <ul class="list-group">
+            <% customers.forEach(customer => { %>
+                <li class="list-group-item">
+                    <strong>שם:</strong> <%= customer.name %> | 
+                    <strong>טלפון:</strong> <%= customer.phone %>
+                    <br>
+                    <a href="/manager/customer/<%= customer.id %>" class="btn btn-primary btn-sm">🔍 נהל לקוח</a>
+                </li>
+            <% }); %>
+        </ul>
+
+        <a href="/manager/logout" class="btn btn-danger mt-4">🚪 התנתקות</a>
+    </div>
+
+    <script>
+        document.getElementById("addCustomerForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            const name = document.getElementById("customerName").value.trim();
+            const phone = document.getElementById("customerPhone").value.trim();
+
+            if (!name || !phone) {
+                alert("❌ יש למלא את כל השדות!");
+                return;
+            }
+
+            fetch('/manager/add-customer', {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name, phone })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert("✅ לקוח נוסף בהצלחה!");
+                    location.reload();
+                } else {
+                    alert("❌ שגיאה: " + data.message);
+                }
+            })
+            .catch(error => console.error("❌ שגיאה:", error));
+        });
+    </script>
+</body>
+</html>

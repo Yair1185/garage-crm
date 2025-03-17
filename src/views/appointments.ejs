@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>תיאום תור</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light text-center">
+    <div class="container mt-5">
+        <h1 class="text-success">תיאום תור</h1>
+        <p class="lead">בחר תאריך, שירות ושעה זמינה</p>
+
+        <div class="card p-4 shadow-lg bg-white w-50 mx-auto">
+            <form id="appointmentForm" class="text-start">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">📅 בחר תאריך</label>
+                    <input type="date" id="datePicker" name="date" class="form-control" required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">🔧 בחר שירות</label>
+                    <select id="service" name="service" class="form-select" required>
+                        <option value="">בחר שירות</option>
+                        <option value="טיפול גדול">טיפול גדול</option>
+                        <option value="טיפול קטן">טיפול קטן</option>
+                        <option value="בדיקה ראשונית">בדיקה ראשונית</option>
+                        <option value="תקלה במערכת גז">תקלה במערכת גז</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">⏰ בחר שעת תור</label>
+                    <select id="timeSlot" name="time" class="form-select" required>
+                        <option value="">בחר שעת תור</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">🚗 בחר רכב</label>
+                    <select id="vehicle_id" name="vehicle_id" class="form-select" required>
+                        <% if (vehicles.length === 0) { %>
+                            <option value="">🚗 אין רכבים משויכים</option>
+                        <% } else { %>
+                            <% vehicles.forEach(function(vehicle) { %>
+                                <option value="<%= vehicle.id %>"><%= vehicle.model %> - <%= vehicle.license_plate %></option>
+                            <% }); %>
+                        <% } %>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-success w-100">📅 קבע תור</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // טעינת שעות פנויות כשמשתמש בוחר תאריך ושירות
+            function loadAvailableSlots() {
+                const service = document.getElementById("service").value;
+                const date = document.getElementById("datePicker").value;
+                const timeSlotSelect = document.getElementById("timeSlot");
+
+                if (!service || !date) return;
+
+                fetch(`/appointments/available-slots?service=${service}&date=${date}`)
+                    .then(response => response.json())
+                    .then(slots => {
+                        timeSlotSelect.innerHTML = "";
+                        if (slots.length === 0) {
+                            timeSlotSelect.innerHTML = "<option value=''>אין תורים זמינים</option>";
+                        } else {
+                            slots.forEach(slot => {
+                                const option = document.createElement("option");
+                                option.value = slot.start;
+                                option.textContent = `${slot.start} - ${slot.end}`;
+                                timeSlotSelect.appendChild(option);
+                            });
+                        }
+                    })
+                    .catch(error => console.error("❌ שגיאה בטעינת תורים זמינים:", error));
+            }
+
+            document.getElementById("service").addEventListener("change", loadAvailableSlots);
+            document.getElementById("datePicker").addEventListener("change", loadAvailableSlots);
+
+            // שליחת טופס
+            document.getElementById("appointmentForm").addEventListener("submit", function (event) {
+                event.preventDefault(); // מניעת שליחה רגילה
+
+                // איסוף הנתונים מהטופס
+                const formData = {
+                    vehicle_id: document.getElementById("vehicle_id").value,
+                    service: document.getElementById("service").value,
+                    date: document.getElementById("datePicker").value,
+                    time: document.getElementById("timeSlot").value
+                };
+
+                console.log("📌 נשלחים נתונים:", formData); // בדיקה בקונסולה
+
+                // שליחת הנתונים לשרת בפורמט JSON
+                fetch("/appointments/add", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(formData)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert("✅ התור נקבע בהצלחה! תועבר לאזור האישי בעוד 2 שניות...");
+setTimeout(() => {
+    window.location.href = "/customers/dashboard";
+}, 2000);
+                    } else {
+                        alert("❌ שגיאה: " + data.message);
+                    }
+                })
+                .catch(error => console.error("❌ שגיאה בשליחת תור:", error));
+            });
+        });
+    </script>
+</body>
+</html>

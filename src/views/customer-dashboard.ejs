@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>האזור האישי - מוסך מרכבת המשנה</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .dashboard-container {
+            max-width: 800px;
+            margin-top: 50px;
+        }
+        .list-group-item {
+            background-color: white;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            padding: 15px;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .btn-container {
+            display: flex;
+            gap: 5px;
+        }
+    </style>
+</head>
+<body class="text-center">
+    <div class="container dashboard-container">
+        <h1 class="text-success">שלום, <%= customer.name %> 👋</h1>
+
+        <!-- רכבים משויכים ללקוח -->
+        <h2 class="mt-4">🚗 הרכבים שלך</h2>
+        <ul class="list-group">
+            <% if (vehicles.length === 0) { %>
+                <li class="list-group-item text-danger">אין לך רכבים משויכים.</li>
+            <% } else { %>
+                <% vehicles.forEach(vehicle => { %>
+                    <li class="list-group-item">
+                        <strong>דגם:</strong> <%= vehicle.model %> <br>
+                        <strong>מספר רישוי:</strong> <%= vehicle.license_plate %> <br>
+                        <a href="/appointments" class="btn btn-sm btn-outline-success mt-2">📅 קבע תור</a>
+                    </li>
+                <% }); %>
+            <% } %>
+        </ul>
+
+        <!-- תורים משויכים ללקוח -->
+        <h2 class="mt-4">📅 התורים שלי</h2>
+        <ul class="list-group">
+            <% if (appointments.length === 0) { %>
+                <li class="list-group-item text-danger">אין לך תורים מתואמים.</li>
+            <% } else { %>
+                <% appointments.forEach(appointment => { %>
+                    <li class="list-group-item">
+                        <strong>שירות:</strong> <%= appointment.service %> <br>
+                        <strong>תאריך:</strong> <%= appointment.date %> <br>
+                        <div class="btn-container mt-2">
+                            <button onclick="cancelAppointment(<%= appointment.id %>)" class="btn btn-danger btn-sm">❌ בטל תור</button>
+                            <button onclick="rescheduleAppointment(<%= appointment.id %>)" class="btn btn-warning btn-sm">🔄 תזמן מחדש</button>
+                        </div>
+                    </li>
+                <% }); %>
+            <% } %>
+        </ul>
+        <h2 class="mt-4">📊 הסטטיסטיקות שלי</h2>
+<div class="card p-3 bg-white shadow-sm">
+    <p>🔹 סך כל התורים שנקבעו: <strong><%= stats.totalAppointments %></strong></p>
+    <p>🛠️ השירות הכי נפוץ שבחרת: <strong><%= stats.mostCommonService || "לא זמין" %></strong></p>
+    <p>📆 התור הבא שלך: <strong><%= stats.nextAppointment || "אין תור קרוב" %></strong></p>
+</div>
+
+        <script>
+            function cancelAppointment(id) {
+                if (confirm("❗ האם אתה בטוח שברצונך לבטל את התור?")) {
+                    fetch(`/customers/cancel-appointment`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ appointment_id: id })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        alert(data.message || "✅ התור בוטל בהצלחה!");
+                        location.reload();
+                    })
+                    .catch(error => console.error("שגיאה בביטול תור:", error));
+                }
+            }
+
+            function rescheduleAppointment(id) {
+                const newDate = prompt("📅 הכנס תאריך חדש בפורמט YYYY-MM-DD:");
+                if (newDate) {
+                    fetch(`/customers/reschedule-appointment`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ appointment_id: id, new_date: newDate })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        alert(data.message || "✅ התור תוזמן מחדש בהצלחה!");
+                        location.reload();
+                    })
+                    .catch(error => console.error("שגיאה בתזמון מחדש:", error));
+                }
+            }
+        </script>
+
+        <a href="/customers/logout" class="btn btn-danger mt-4">🚪 התנתקות</a>
+    </div>
+</body>
+</html>

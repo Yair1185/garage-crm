@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>🔑 התחברות מנהל</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f0f8ff;
+        }
+        .login-container {
+            max-width: 400px;
+            margin-top: 100px;
+            padding: 30px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body class="d-flex justify-content-center align-items-center vh-100">
+    <div class="login-container text-center">
+        <h2 class="mb-4">🔑 התחברות מנהל</h2>
+        <% if (error) { %>
+            <p class="text-danger"><%= error %></p>
+        <% } %>
+        <form method="POST" action="/manager/login">
+            <div class="mb-3">
+                <input type="text" name="username" class="form-control" placeholder="שם משתמש" required>
+            </div>
+            <div class="mb-3">
+                <input type="password" name="password" class="form-control" placeholder="סיסמה" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">🔓 התחבר</button>
+        </form>
+    </div>
+</body>
+</html>
