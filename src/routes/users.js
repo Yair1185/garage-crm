@@ -12,7 +12,7 @@ router.get('/login', (req, res) => {
 router.post('/login', (req, res) => {
     const { username, password } = req.body;
 
-    db.get('SELECT * FROM users WHERE username = ?', [username], (err, user) => {
+    db.query('SELECT * FROM users WHERE username = ?', [username], (err, user) => {
         if (!user || !bcrypt.compareSync(password, user.password)) {
             return res.render('admin-login', { error: 'שם משתמש או סיסמה שגויים.' });
         }
@@ -30,7 +30,7 @@ router.get('/login', (req, res) => {
 router.post('/login', (req, res) => {
     const { username, password } = req.body;
 
-    db.get('SELECT * FROM users WHERE username = ? AND password = ?', [username, password], (err, user) => {
+    db.query('SELECT * FROM users WHERE username = ? AND password = ?', [username, password], (err, user) => {
         if (err) {
             return res.render('login', { error: 'Database error.' });
         }

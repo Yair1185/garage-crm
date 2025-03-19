@@ -7,7 +7,7 @@ const bcrypt = require('bcrypt');
 router.post('/login', (req, res) => {
   const { username, password } = req.body;
 
-  db.get(`SELECT * FROM admin WHERE username = ?`, [username], (err, user) => {
+  db.query(`SELECT * FROM admin WHERE username = ?`, [username], (err, user) => {
     if (err) return res.status(500).json({ error: "Database error" });
     if (!user || !bcrypt.compareSync(password, user.password)) {
       return res.status(401).json({ error: "Invalid username or password" });
@@ -29,13 +29,13 @@ router.use((req, res, next) => {
 // ✅ Dashboard מנהל - סטטיסטיקות ונתונים
 router.get('/dashboard', async (req, res) => {
   try {
-    db.get(`SELECT COUNT(*) AS total FROM customers`, (err, totalCustomers) => {
-      db.get(`SELECT COUNT(*) AS total FROM vehicles`, (err, totalVehicles) => {
-        db.get(`SELECT COUNT(*) AS total FROM appointments`, (err, totalAppointments) => {
-          db.get(`SELECT service FROM appointments GROUP BY service ORDER BY COUNT(service) DESC LIMIT 1`, (err, mostCommonService) => {
+    db.query(`SELECT COUNT(*) AS total FROM customers`, (err, totalCustomers) => {
+      db.query(`SELECT COUNT(*) AS total FROM vehicles`, (err, totalVehicles) => {
+        db.query(`SELECT COUNT(*) AS total FROM appointments`, (err, totalAppointments) => {
+          db.query(`SELECT service FROM appointments GROUP BY service ORDER BY COUNT(service) DESC LIMIT 1`, (err, mostCommonService) => {
 
-            db.all(`SELECT * FROM customers`, [], (err, customers) => {
-              db.all(`SELECT * FROM vehicles`, [], (err, vehicles) => {
+            db.query(`SELECT * FROM customers`, [], (err, customers) => {
+              db.query(`SELECT * FROM vehicles`, [], (err, vehicles) => {
 
                 res.status(200).json({
                   stats: {

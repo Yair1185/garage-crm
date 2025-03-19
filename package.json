@@ -2,25 +2,25 @@
   "name": "garage-crm",
   "version": "1.0.0",
   "description": "Garage CRM for managing car service appointments",
-
-"scripts": {
-  "dev": "nodemon src/server.js",
-  "start": "node src/server.js",
-  "test": "jest"
-},
+  "scripts": {
+    "dev": "nodemon src/server.js",
+    "start": "node src/server.js",
+    "test": "jest --detectOpenHandles --forceExit"
+  },
   "dependencies": {
     "axios": "^1.3.4",
     "bcrypt": "^5.1.0",
     "cors": "^2.8.5",
-    "dotenv": "^16.0.3",
+    "dotenv": "^16.4.7",
     "express": "^4.18.2",
     "express-session": "^1.17.3",
-    "sqlite3": "^5.1.2"
+    "pg": "^8.14.1",
+    "sqlite3": "^5.1.2",
+    "supertest-session": "^5.0.1"
   },
   "devDependencies": {
     "jest": "^29.7.0",
     "nodemon": "^3.1.9",
     "supertest": "^7.0.0"
   }
-
 }

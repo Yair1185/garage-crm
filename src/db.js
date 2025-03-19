@@ -1,77 +1,15 @@
-const sqlite3 = require('sqlite3').verbose();
-const bcrypt = require('bcrypt');
+// ✅ src/db.js - PostgreSQL Pool
+const { Pool } = require('pg');
 require('dotenv').config();
 
-const db = new sqlite3.Database('./garage.db', (err) => {
-  if (err) {
-    console.error("❌ Database connection failed:", err.message);
-  } else {
-    console.log("✅ Connected to SQLite database.");
-  }
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false } // להסרה ב-local
 });
 
-// 📌 יצירת טבלאות
-db.serialize(() => {
-  db.run(`
-    CREATE TABLE IF NOT EXISTS customers (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name TEXT NOT NULL,
-      phone TEXT UNIQUE NOT NULL,
-      email TEXT UNIQUE NOT NULL
-    )
-  `);
-
-  db.run(`
-    CREATE TABLE IF NOT EXISTS vehicles (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      customer_id INTEGER NOT NULL,
-      model TEXT NOT NULL,
-      plate TEXT UNIQUE NOT NULL,
-      FOREIGN KEY (customer_id) REFERENCES customers(id) ON DELETE CASCADE
-    )
-  `);
-
-  db.run(`
-    CREATE TABLE IF NOT EXISTS appointments (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      customer_id INTEGER NOT NULL,
-      vehicle_id INTEGER NOT NULL,
-      service TEXT NOT NULL,
-      date TEXT NOT NULL,
-      status TEXT DEFAULT 'scheduled',
-      FOREIGN KEY (customer_id) REFERENCES customers(id),
-      FOREIGN KEY (vehicle_id) REFERENCES vehicles(id)
-    )
-  `);
-
-  db.run(`
-    CREATE TABLE IF NOT EXISTS admin (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      username TEXT UNIQUE NOT NULL,
-      password TEXT NOT NULL
-    )
-  `);
-
-  db.run(`
-    CREATE TABLE IF NOT EXISTS blocked_days (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      date TEXT UNIQUE NOT NULL
-    )
-  `);
-  
-
-  // 📌 בדיקה אם מנהל קיים, אם לא - יצירת אחד עם סיסמה מוצפנת
-  db.get(`SELECT * FROM admin WHERE username = ?`, ["admin"], (err, row) => {
-    if (!row) {
-      const hashedPassword = bcrypt.hashSync(process.env.ADMIN_PASSWORD || "1234", 10);
-      db.run(`INSERT INTO admin (username, password) VALUES (?, ?)`, ["admin", hashedPassword]);
-      console.log("✅ Admin user created.");
-    }
-  });
-});
+db.query(`SELECT * FROM customers WHERE id = $1`, [customerId])
+  .then(result => result.rows[0])
+  .catch(err => console.error(err));
 
 
-db.on('trace', (sql) => console.log('SQL:', sql));
-
-
-module.exports = db;
+module.exports = pool;

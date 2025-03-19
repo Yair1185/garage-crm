@@ -17,12 +17,12 @@ router.get('/', (req, res) => {
 
     const customerId = req.session.customerId;
 
-    db.all(`SELECT * FROM vehicles WHERE customer_id = ?`, [customerId], (err, vehicles) => {
+    db.query(`SELECT * FROM vehicles WHERE customer_id = ?`, [customerId], (err, vehicles) => {
         if (err) {
             return res.status(500).send('❌ שגיאה בשליפת רכבים.');
         }
 
-        db.all(`SELECT * FROM appointments WHERE vehicle_id IN (SELECT id FROM vehicles WHERE customer_id = ?)`, 
+        db.query(`SELECT * FROM appointments WHERE vehicle_id IN (SELECT id FROM vehicles WHERE customer_id = ?)`, 
             [customerId], (err, appointments) => {
             if (err) {
                 return res.status(500).send('❌ שגיאה בשליפת תורים.');
@@ -51,7 +51,7 @@ router.post('/add', (req, res) => {
     const appointmentDateTime = `${date} ${time}`;
 
     // בדיקת תאריך חסום
-db.get(`SELECT * FROM blocked_days WHERE date = ?`, [dateOnly], (err, row) => {
+    db.query(`SELECT * FROM blocked_days WHERE date = ?`, [dateOnly], (err, row) => {
     if (row && !req.session.isAdmin) {
       return res.status(400).json({ error: "התאריך חסום לתיאום תורים" });
     }
@@ -59,7 +59,7 @@ db.get(`SELECT * FROM blocked_days WHERE date = ?`, [dateOnly], (err, row) => {
   });
   
 
-    db.run(`INSERT INTO appointments (vehicle_id, service, date) VALUES (?, ?, ?)`,
+  db.query(`INSERT INTO appointments (vehicle_id, service, date) VALUES (?, ?, ?)`,
         [vehicle_id, service, appointmentDateTime],
         function (err) {
             if (err) {
@@ -101,7 +101,7 @@ router.get('/available-slots', (req, res) => {
         }
     }
 
-    db.all(`SELECT date FROM appointments WHERE date LIKE ? ORDER BY date`, [`${date}%`], (err, appointments) => {
+    db.query(`SELECT date FROM appointments WHERE date LIKE ? ORDER BY date`, [`${date}%`], (err, appointments) => {
         if (err) {
             return res.status(500).send("❌ שגיאה בשליפת תורים");
         }

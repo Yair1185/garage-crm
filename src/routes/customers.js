@@ -4,37 +4,34 @@ const db = require('../db');
 const bcrypt = require('bcrypt');
 
 // ✅ רישום לקוח חדש
-router.post('/register', (req, res) => {
+// הרשמה
+router.post('/register', async (req, res) => {
   const { name, phone, email, model, plate } = req.body;
+  try {
+    const result = await db.query(
+      `INSERT INTO customers (name, phone, email) VALUES ($1, $2, $3) RETURNING id`,
+      [name, phone, email]
+    );
+    const customerId = result.rows[0].id;
 
-  if (!name || !phone || !email || !model || !license_plate) {
-    return res.status(400).json({ error: 'All fields are required' });
+    await db.query(
+      `INSERT INTO vehicles (customer_id, model, plate) VALUES ($1, $2, $3)`,
+      [customerId, model, plate]
+    );
+
+    res.status(200).json({ message: 'Customer registered successfully' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Registration failed' });
   }
-
-  db.run(
-    `INSERT INTO customers (name, phone, email) VALUES (?, ?, ?)`,
-    [name, phone, email],
-    function (err) {
-      if (err) return res.status(500).json({ error: 'Failed to register customer' });
-
-      const customerId = this.lastID;
-      db.run(
-        `INSERT INTO vehicles (customer_id, model, plate) VALUES (?, ?, ?)`,
-        [customerId, model, license_plate],
-        (err) => {
-          if (err) return res.status(500).json({ error: 'Failed to add vehicle' });
-          res.status(200).json({ message: 'Customer registered successfully' });
-        }
-      );
-    }
-  );
 });
+
 
 // ✅ התחברות לקוח
 router.post('/login', (req, res) => {
   const { phone, plate } = req.body;
 
-  db.get(
+  db.query(
     `SELECT customers.id AS customer_id FROM customers
      JOIN vehicles ON customers.id = vehicles.customer_id
      WHERE customers.phone = ? AND vehicles.plate = ?`,
@@ -54,13 +51,13 @@ router.get('/dashboard', (req, res) => {
   if (!req.session.customerId) return res.status(401).json({ error: 'Unauthorized' });
   const customerId = req.session.customerId;
 
-  db.get(`SELECT * FROM customers WHERE id = ?`, [customerId], (err, customer) => {
+  db.query(`SELECT * FROM customers WHERE id = ?`, [customerId], (err, customer) => {
     if (err || !customer) return res.status(500).json({ error: 'Failed to fetch customer' });
 
-    db.all(`SELECT * FROM vehicles WHERE customer_id = ?`, [customerId], (err, vehicles) => {
+    db.query(`SELECT * FROM vehicles WHERE customer_id = ?`, [customerId], (err, vehicles) => {
       if (err) return res.status(500).json({ error: 'Failed to fetch vehicles' });
 
-      db.all(
+      db.query(
         `SELECT * FROM appointments WHERE vehicle_id IN (SELECT id FROM vehicles WHERE customer_id = ?)`,
         [customerId],
         (err, appointments) => {
@@ -80,7 +77,7 @@ router.post('/add-vehicle', (req, res) => {
     return res.status(400).json({ error: 'All fields are required' });
   }
 
-  db.run(
+  db.query(
     `INSERT INTO vehicles (customer_id, model, plate) VALUES (?, ?, ?)`,
     [customer_id, model, plate],
     (err) => {

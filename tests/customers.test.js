@@ -1,17 +1,21 @@
-// ✅ tests/customers.test.js - כולל DEBUG
-const request = require('supertest');
+// ✅ tests/customers.test.js עם supertest-session
+const session = require('supertest-session');
 const app = require('../src/app');
 
-let sessionCookie = '';
+let testSession;
+
+beforeEach(() => {
+  testSession = session(app);
+});
 
 describe('Customers API', () => {
   test('POST /customers/register - success', async () => {
-    const res = await request(app).post('/customers/register').send({
+    const res = await testSession.post('/customers/register').send({
       name: 'Test User',
       phone: '0500000000',
       email: 'testuser@example.com',
       model: 'Mazda 3',
-      plate: '12-345-67'
+      license_plate: '12-345-67'
     });
     console.log('REGISTER RESPONSE:', res.body);
     expect(res.statusCode).toBe(200);
@@ -19,31 +23,31 @@ describe('Customers API', () => {
   });
 
   test('POST /customers/login - success', async () => {
-    const res = await request(app).post('/customers/login').send({
+    const res = await testSession.post('/customers/login').send({
       phone: '0500000000',
-      license_plate: '12-345-67' // ← שים לב זה חייב להיות license_plate
+      license_plate: '12-345-67'
     });
     console.log('LOGIN RESPONSE:', res.body);
     expect(res.statusCode).toBe(200);
     expect(res.body).toHaveProperty('message');
-    sessionCookie = res.headers['set-cookie'];
-    console.log('SESSION COOKIE:', sessionCookie);
   });
 
   test('GET /customers/dashboard - success', async () => {
-    const res = await request(app)
-      .get('/customers/dashboard')
-      .set('Cookie', sessionCookie);
+    await testSession.post('/customers/login').send({
+      phone: '0500000000',
+      license_plate: '12-345-67'
+    });
+    const res = await testSession.get('/customers/dashboard');
     console.log('DASHBOARD RESPONSE:', res.body);
     expect(res.statusCode).toBe(200);
     expect(res.body).toHaveProperty('customer');
   });
 
   test('POST /customers/add-vehicle - success', async () => {
-    const res = await request(app).post('/customers/add-vehicle').send({
-      customer_id: 1,
+    const res = await testSession.post('/customers/add-vehicle').send({
+      customer_id: 1, // חשוב לוודא שה-ID קיים
       model: 'Toyota Corolla',
-      plate: '34-567-89' // ← תוקן ל-plate
+      license_plate: '34-567-89'
     });
     console.log('ADD VEHICLE RESPONSE:', res.body);
     expect(res.statusCode).toBe(200);

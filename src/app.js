@@ -5,7 +5,8 @@ const cors = require('cors');
 const customerRoutes = require('./routes/customers');
 const appointmentRoutes = require('./routes/appointments');
 const managerRoutes = require('./routes/manager');
-const db = require('./db');
+const db = require('./db'); // מעכשיו PostgreSQL
+
 const blockedRoutes = require('./routes/blockedDays');
 const app = express();
 app.use(express.json());
