@@ -52,6 +52,14 @@ db.serialize(() => {
     )
   `);
 
+  db.run(`
+    CREATE TABLE IF NOT EXISTS blocked_days (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      date TEXT UNIQUE NOT NULL
+    )
+  `);
+  
+
   // 📌 בדיקה אם מנהל קיים, אם לא - יצירת אחד עם סיסמה מוצפנת
   db.get(`SELECT * FROM admin WHERE username = ?`, ["admin"], (err, row) => {
     if (!row) {

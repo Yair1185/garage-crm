@@ -50,6 +50,15 @@ router.post('/add', (req, res) => {
 
     const appointmentDateTime = `${date} ${time}`;
 
+    // בדיקת תאריך חסום
+db.get(`SELECT * FROM blocked_days WHERE date = ?`, [dateOnly], (err, row) => {
+    if (row && !req.session.isAdmin) {
+      return res.status(400).json({ error: "התאריך חסום לתיאום תורים" });
+    }
+    // המשך הוספת התור למסד...
+  });
+  
+
     db.run(`INSERT INTO appointments (vehicle_id, service, date) VALUES (?, ?, ?)`,
         [vehicle_id, service, appointmentDateTime],
         function (err) {
