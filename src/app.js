@@ -7,9 +7,8 @@ const appointmentRoutes = require('./routes/appointments');
 const managerRoutes = require('./routes/manager');
 const db = require('./db');
 const blockedRoutes = require('./routes/blockedDays');
-
-
 const app = express();
+app.use(express.json());
 
 // 📌 Middleware
 app.use(cors({ origin: "http://localhost:5173", credentials: true }));
@@ -20,8 +19,6 @@ app.use(session({
   saveUninitialized: true,
   cookie: { secure: false }
 }));
-
-app.use(express.json());  
 
 // 📌 Routes
 app.use('/customers', customerRoutes);

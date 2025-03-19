@@ -11,7 +11,7 @@ describe('Customers API', () => {
       phone: '0500000000',
       email: 'testuser@example.com',
       model: 'Mazda 3',
-      license_plate: '12-345-67'
+      plate: '12-345-67'
     });
     console.log('REGISTER RESPONSE:', res.body);
     expect(res.statusCode).toBe(200);
@@ -21,12 +21,11 @@ describe('Customers API', () => {
   test('POST /customers/login - success', async () => {
     const res = await request(app).post('/customers/login').send({
       phone: '0500000000',
-      license_plate: '12-345-67'
+      license_plate: '12-345-67' // ← שים לב זה חייב להיות license_plate
     });
     console.log('LOGIN RESPONSE:', res.body);
     expect(res.statusCode).toBe(200);
     expect(res.body).toHaveProperty('message');
-
     sessionCookie = res.headers['set-cookie'];
     console.log('SESSION COOKIE:', sessionCookie);
   });
@@ -44,7 +43,7 @@ describe('Customers API', () => {
     const res = await request(app).post('/customers/add-vehicle').send({
       customer_id: 1,
       model: 'Toyota Corolla',
-      license_plate: '34-567-89'
+      plate: '34-567-89' // ← תוקן ל-plate
     });
     console.log('ADD VEHICLE RESPONSE:', res.body);
     expect(res.statusCode).toBe(200);

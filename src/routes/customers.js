@@ -5,7 +5,7 @@ const bcrypt = require('bcrypt');
 
 // ✅ רישום לקוח חדש
 router.post('/register', (req, res) => {
-  const { name, phone, email, model, license_plate } = req.body;
+  const { name, phone, email, model, plate } = req.body;
 
   if (!name || !phone || !email || !model || !license_plate) {
     return res.status(400).json({ error: 'All fields are required' });
@@ -32,7 +32,7 @@ router.post('/register', (req, res) => {
 
 // ✅ התחברות לקוח
 router.post('/login', (req, res) => {
-  const { phone, license_plate } = req.body;
+  const { phone, plate } = req.body;
 
   db.get(
     `SELECT customers.id AS customer_id FROM customers
