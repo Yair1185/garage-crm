@@ -70,4 +70,8 @@ db.serialize(() => {
   });
 });
 
+
+db.on('trace', (sql) => console.log('SQL:', sql));
+
+
 module.exports = db;

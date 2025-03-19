@@ -8,6 +8,7 @@ const managerRoutes = require('./routes/manager');
 const db = require('./db');
 const blockedRoutes = require('./routes/blockedDays');
 
+
 const app = express();
 
 // 📌 Middleware
