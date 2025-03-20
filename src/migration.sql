@@ -1,33 +1,39 @@
+DROP TABLE IF EXISTS appointments;
+DROP TABLE IF EXISTS vehicles;
+DROP TABLE IF EXISTS customers;
+DROP TABLE IF EXISTS blocked_days;
+DROP TABLE IF EXISTS admin;
+
 CREATE TABLE customers (
   id SERIAL PRIMARY KEY,
-  name VARCHAR(100),
-  phone VARCHAR(20) UNIQUE,
-  email VARCHAR(100) UNIQUE
+  name TEXT NOT NULL,
+  phone TEXT UNIQUE NOT NULL,
+  email TEXT UNIQUE NOT NULL
 );
 
 CREATE TABLE vehicles (
   id SERIAL PRIMARY KEY,
   customer_id INTEGER REFERENCES customers(id) ON DELETE CASCADE,
-  model VARCHAR(50),
-  plate VARCHAR(20) UNIQUE
+  model TEXT NOT NULL,
+  plate TEXT UNIQUE NOT NULL
 );
 
 CREATE TABLE appointments (
   id SERIAL PRIMARY KEY,
   customer_id INTEGER REFERENCES customers(id),
   vehicle_id INTEGER REFERENCES vehicles(id),
-  service VARCHAR(50),
-  date DATE,
-  status VARCHAR(20) DEFAULT 'scheduled'
+  service TEXT NOT NULL,
+  date DATE NOT NULL,
+  status TEXT DEFAULT 'scheduled'
 );
 
 CREATE TABLE blocked_days (
   id SERIAL PRIMARY KEY,
-  date DATE UNIQUE
+  date DATE UNIQUE NOT NULL
 );
 
 CREATE TABLE admin (
   id SERIAL PRIMARY KEY,
-  username VARCHAR(50) UNIQUE,
-  password VARCHAR(200)
+  username TEXT UNIQUE NOT NULL,
+  password TEXT NOT NULL
 );

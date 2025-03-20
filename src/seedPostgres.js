@@ -3,8 +3,13 @@ const { Pool } = require('pg');
 require('dotenv').config();
 
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
+  user: 'postgres',
+  host: 'localhost',
+  database: 'garage_crm',
+  password: 'הסיסמה שלך',
+  port: 5432, // ✅ חובה 5432
 });
+
 
 async function seed() {
   const client = await pool.connect();
