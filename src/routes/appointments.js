@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../db');
+const pool = require('../db'); // PostgreSQL
 
 const treatmentDurations = {
     "טיפול גדול": 120, // 2 שעות
