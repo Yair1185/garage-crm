@@ -4,7 +4,7 @@ const db = require('../db');
 
 // ✅ הצגת כל הרכבים עם פרטי הלקוח
 router.get('/', (req, res) => {
-  db.all(`
+  db.query(`
     SELECT vehicles.id, vehicles.model, vehicles.plate, customers.name AS customer_name
     FROM vehicles
     JOIN customers ON vehicles.customer_id = customers.id
@@ -23,7 +23,7 @@ router.post('/add', (req, res) => {
     return res.status(400).json({ error: "All fields are required" });
   }
 
-  db.run(`INSERT INTO vehicles (customer_id, model, plate) VALUES (?, ?, ?)`,
+  db.query(`INSERT INTO vehicles (customer_id, model, plate) VALUES (?, ?, ?)`,
     [customer_id, model, plate],
     (err) => {
       if (err) return res.status(500).json({ error: 'Failed to add vehicle' });

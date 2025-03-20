@@ -4,7 +4,7 @@ const db = require('../db');
 
 // 📌 הצגת כל הימים החסומים
 router.get('/', (req, res) => {
-  db.all(`SELECT * FROM blocked_days`, [], (err, rows) => {
+  db.query(`SELECT * FROM blocked_days`, [], (err, rows) => {
     if (err) return res.status(500).json({ error: "Database error" });
     res.json(rows);
   });
@@ -19,7 +19,7 @@ router.post('/block', (req, res) => {
   const { date } = req.body;
   if (!date) return res.status(400).json({ error: "תאריך חסר" });
 
-  db.run(`INSERT INTO blocked_days (date) VALUES (?)`, [date], function (err) {
+  db.query(`INSERT INTO blocked_days (date) VALUES (?)`, [date], function (err) {
     if (err) return res.status(500).json({ error: "Failed to block date" });
     res.status(201).json({ message: "התאריך נחסם", id: this.lastID });
   });
@@ -32,7 +32,7 @@ router.delete('/unblock/:date', (req, res) => {
   }
 
   const { date } = req.params;
-  db.run(`DELETE FROM blocked_days WHERE date = ?`, [date], function (err) {
+  db.query(`DELETE FROM blocked_days WHERE date = ?`, [date], function (err) {
     if (err) return res.status(500).json({ error: "Failed to unblock date" });
     res.json({ message: "החסימה בוטלה" });
   });
