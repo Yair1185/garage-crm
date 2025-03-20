@@ -1,41 +1,43 @@
+// ✅ src/routes/blockedDays.js - PostgreSQL Version
 const express = require('express');
 const router = express.Router();
-const pool = require('../db'); // PostgreSQL
+const pool = require('../db');
 
-// 📌 הצגת כל הימים החסומים
-router.get('/', (req, res) => {
-  db.query(`SELECT * FROM blocked_days`, [], (err, rows) => {
-    if (err) return res.status(500).json({ error: "Database error" });
-    res.json(rows);
-  });
+// ✅ שליפת ימים חסומים
+router.get('/', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM blocked_days ORDER BY date ASC');
+    res.status(200).json(result.rows);
+  } catch (err) {
+    console.error('❌ Error fetching blocked days:', err);
+    res.status(500).json({ error: 'Failed to fetch blocked days' });
+  }
 });
 
-// 📌 חסימת יום לתיאום
-router.post('/block', (req, res) => {
-  if (!req.session.isAdmin) {
-    return res.status(403).json({ error: "גישה חסומה" });
-  }
-
+// ✅ הוספת יום לחסום
+router.post('/block', async (req, res) => {
   const { date } = req.body;
-  if (!date) return res.status(400).json({ error: "תאריך חסר" });
+  if (!date) return res.status(400).json({ error: 'Date is required' });
 
-  db.query(`INSERT INTO blocked_days (date) VALUES (?)`, [date], function (err) {
-    if (err) return res.status(500).json({ error: "Failed to block date" });
-    res.status(201).json({ message: "התאריך נחסם", id: this.lastID });
-  });
+  try {
+    await pool.query('INSERT INTO blocked_days (date) VALUES ($1) ON CONFLICT (date) DO NOTHING', [date]);
+    res.status(201).json({ message: 'Day blocked successfully' });
+  } catch (err) {
+    console.error('❌ Error blocking day:', err);
+    res.status(500).json({ error: 'Failed to block day' });
+  }
 });
 
-// 📌 ביטול חסימה של יום
-router.delete('/unblock/:date', (req, res) => {
-  if (!req.session.isAdmin) {
-    return res.status(403).json({ error: "גישה חסומה" });
-  }
-
+// ✅ ביטול חסימה של יום
+router.delete('/unblock/:date', async (req, res) => {
   const { date } = req.params;
-  db.query(`DELETE FROM blocked_days WHERE date = ?`, [date], function (err) {
-    if (err) return res.status(500).json({ error: "Failed to unblock date" });
-    res.json({ message: "החסימה בוטלה" });
-  });
+  try {
+    await pool.query('DELETE FROM blocked_days WHERE date = $1', [date]);
+    res.status(200).json({ message: 'Day unblocked successfully' });
+  } catch (err) {
+    console.error('❌ Error unblocking day:', err);
+    res.status(500).json({ error: 'Failed to unblock day' });
+  }
 });
 
 module.exports = router;
