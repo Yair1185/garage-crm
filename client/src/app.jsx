@@ -1,22 +1,24 @@
-import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import CustomerDashboard from "./pages/customer/CustomerDashboard";
-import AdminDashboard from "./pages/admin/AdminDashboard";
-import BlockedDays from "./pages/admin/BlockedDays";
+// ✅ client/src/App.jsx
+import React from 'react';
+import { Routes, Route } from 'react-router-dom';
+import HomePage from './pages/HomePage';
+import RegisterPage from './pages/RegisterPage';
+import LoginPage from './pages/LoginPage';
+import DashboardPage from './pages/DashboardPage';
+import AdminPage from './pages/admin/AdminDashboard';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const App = () => {
   return (
-    <Router>
+    <div className="container mt-4">
       <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/dashboard" element={<CustomerDashboard />} />
-        <Route path="/admin" element={<AdminDashboard />} />
-        <Route path="/admin/blocked-days" element={<BlockedDays />} />
+        <Route path="/" element={<HomePage />} />
+        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/admin" element={<AdminPage />} />
       </Routes>
-    </Router>
+    </div>
   );
 };
 
