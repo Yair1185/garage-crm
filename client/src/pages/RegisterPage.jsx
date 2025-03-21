@@ -1,7 +1,6 @@
 // client/src/pages/RegisterPage.jsx
 import React, { useState } from 'react';
-import axios from 'axios';
-import { Form, Button, Alert } from 'react-bootstrap';
+import { registerCustomer } from '../api/customers';
 import { useNavigate } from 'react-router-dom';
 
 const RegisterPage = () => {
@@ -10,56 +9,53 @@ const RegisterPage = () => {
     phone: '',
     email: '',
     model: '',
-    license_plate: ''
+    plate: ''
   });
-  const [error, setError] = useState('');
+  const [message, setMessage] = useState('');
   const navigate = useNavigate();
 
   const handleChange = (e) => {
-    setFormData({...formData, [e.target.name]: e.target.value});
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleRegister = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
-
     try {
-      const res = await axios.post('http://localhost:5000/customers/register', formData, { withCredentials: true });
-      console.log('✅ Registration success:', res.data);
-      navigate('/dashboard');
+      const res = await registerCustomer(formData);
+      setMessage('✅ Registration successful');
+      navigate('/login');
     } catch (err) {
-      console.error('❌ Registration failed:', err.response?.data);
-      setError(err.response?.data?.error || 'Registration failed');
+      setMessage(err.response?.data?.error || '❌ Registration failed');
     }
   };
 
   return (
-    <div>
-      <h2>Customer Registration</h2>
-      {error && <Alert variant="danger">{error}</Alert>}
-      <Form onSubmit={handleRegister}>
-        <Form.Group className="mb-3">
-          <Form.Label>Full Name</Form.Label>
-          <Form.Control type="text" name="name" placeholder="Enter name" onChange={handleChange} />
-        </Form.Group>
-        <Form.Group className="mb-3">
-          <Form.Label>Phone</Form.Label>
-          <Form.Control type="text" name="phone" placeholder="Enter phone" onChange={handleChange} />
-        </Form.Group>
-        <Form.Group className="mb-3">
-          <Form.Label>Email</Form.Label>
-          <Form.Control type="email" name="email" placeholder="Enter email" onChange={handleChange} />
-        </Form.Group>
-        <Form.Group className="mb-3">
-          <Form.Label>Car Model</Form.Label>
-          <Form.Control type="text" name="model" placeholder="Enter car model" onChange={handleChange} />
-        </Form.Group>
-        <Form.Group className="mb-3">
-          <Form.Label>License Plate</Form.Label>
-          <Form.Control type="text" name="license_plate" placeholder="Enter license plate" onChange={handleChange} />
-        </Form.Group>
-        <Button variant="success" type="submit">Register</Button>
-      </Form>
+    <div className="container">
+      <h2>Register</h2>
+      {message && <div className="alert alert-info">{message}</div>}
+      <form onSubmit={handleSubmit}>
+        <div className="mb-3">
+          <label>Name</label>
+          <input type="text" name="name" className="form-control" onChange={handleChange} required />
+        </div>
+        <div className="mb-3">
+          <label>Phone</label>
+          <input type="text" name="phone" className="form-control" onChange={handleChange} required />
+        </div>
+        <div className="mb-3">
+          <label>Email</label>
+          <input type="email" name="email" className="form-control" onChange={handleChange} required />
+        </div>
+        <div className="mb-3">
+          <label>Vehicle Model</label>
+          <input type="text" name="model" className="form-control" onChange={handleChange} required />
+        </div>
+        <div className="mb-3">
+          <label>License Plate</label>
+          <input type="text" name="plate" className="form-control" onChange={handleChange} required />
+        </div>
+        <button type="submit" className="btn btn-primary">Register</button>
+      </form>
     </div>
   );
 };

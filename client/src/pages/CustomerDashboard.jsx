@@ -1,75 +1,66 @@
 // client/src/pages/CustomerDashboard.jsx
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { Button, Card, ListGroup, Alert } from 'react-bootstrap';
+import React, { useState, useEffect } from 'react';
+import { fetchDashboard, logoutCustomer } from '../api/customers';
 import { useNavigate } from 'react-router-dom';
 
 const CustomerDashboard = () => {
-  const [customerData, setCustomerData] = useState(null);
+  const [customer, setCustomer] = useState(null);
+  const [vehicles, setVehicles] = useState([]);
+  const [appointments, setAppointments] = useState([]);
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchDashboard();
+    const loadDashboard = async () => {
+      try {
+        const res = await fetchDashboard();
+        setCustomer(res.data.customer);
+        setVehicles(res.data.vehicles);
+        setAppointments(res.data.appointments);
+      } catch (err) {
+        setError(err.response?.data?.error || '❌ Failed to load dashboard');
+      }
+    };
+    loadDashboard();
   }, []);
 
-  const fetchDashboard = async () => {
-    try {
-      const res = await axios.get('http://localhost:5000/customers/dashboard', { withCredentials: true });
-      console.log('✅ Dashboard Data:', res.data);
-      setCustomerData(res.data);
-    } catch (err) {
-      console.error('❌ Fetch dashboard failed:', err.response?.data);
-      setError(err.response?.data?.error || 'Failed to load dashboard');
-    }
-  };
-
   const handleLogout = async () => {
-    await axios.get('http://localhost:5000/customers/logout', { withCredentials: true });
+    await logoutCustomer();
     navigate('/login');
   };
 
-  if (error) return <Alert variant="danger">{error}</Alert>;
-
   return (
-    <div>
+    <div className="container">
       <h2>Customer Dashboard</h2>
-      {customerData && (
-        <>
-          <Card className="mb-3">
-            <Card.Body>
-              <Card.Title>Customer Info</Card.Title>
-              <Card.Text>Name: {customerData.customer.name}</Card.Text>
-              <Card.Text>Phone: {customerData.customer.phone}</Card.Text>
-              <Card.Text>Email: {customerData.customer.email}</Card.Text>
-            </Card.Body>
-          </Card>
-
-          <Card className="mb-3">
-            <Card.Body>
-              <Card.Title>Vehicles</Card.Title>
-              <ListGroup>
-                {customerData.vehicles.map((v) => (
-                  <ListGroup.Item key={v.id}>{v.model} - {v.plate}</ListGroup.Item>
-                ))}
-              </ListGroup>
-            </Card.Body>
-          </Card>
-
-          <Card className="mb-3">
-            <Card.Body>
-              <Card.Title>Appointments</Card.Title>
-              <ListGroup>
-                {customerData.appointments.map((a) => (
-                  <ListGroup.Item key={a.id}>{a.date} - {a.service}</ListGroup.Item>
-                ))}
-              </ListGroup>
-            </Card.Body>
-          </Card>
-
-          <Button variant="danger" onClick={handleLogout}>Logout</Button>
-        </>
+      {error && <div className="alert alert-danger">{error}</div>}
+      {customer && (
+        <div className="mb-4">
+          <h4>Welcome, {customer.name}</h4>
+          <p>Email: {customer.email}</p>
+          <p>Phone: {customer.phone}</p>
+        </div>
       )}
+      <div className="mb-4">
+        <h5>Vehicles</h5>
+        <ul className="list-group">
+          {vehicles.map((vehicle) => (
+            <li key={vehicle.id} className="list-group-item">
+              {vehicle.model} - {vehicle.plate}
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div className="mb-4">
+        <h5>Appointments</h5>
+        <ul className="list-group">
+          {appointments.map((appt) => (
+            <li key={appt.id} className="list-group-item">
+              {appt.date} - {appt.service} ({appt.status})
+            </li>
+          ))}
+        </ul>
+      </div>
+      <button className="btn btn-danger" onClick={handleLogout}>Logout</button>
     </div>
   );
 };

@@ -1,57 +1,52 @@
 // client/src/pages/LoginPage.jsx
 import React, { useState } from 'react';
-import axios from 'axios';
-import { Form, Button, Alert } from 'react-bootstrap';
+import { loginCustomer } from '../api/customers';
 import { useNavigate } from 'react-router-dom';
 
 const LoginPage = () => {
   const [phone, setPhone] = useState('');
   const [plate, setPlate] = useState('');
-  const [error, setError] = useState('');
+  const [message, setMessage] = useState('');
   const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
     try {
-      const res = await axios.post('http://localhost:5000/customers/login', {
-        phone,
-        license_plate: plate,
-      }, { withCredentials: true });
-
-      console.log('✅ Login successful:', res.data);
+      const res = await loginCustomer({ phone, license_plate: plate });
+      setMessage('✅ Login successful');
       navigate('/dashboard');
     } catch (err) {
-      console.error('❌ Login failed:', err.response?.data);
-      setError(err.response?.data?.error || 'Login failed');
+      setMessage(err.response?.data?.error || '❌ Login failed');
     }
   };
 
   return (
-    <div>
-      <h2>Customer Login</h2>
-      {error && <Alert variant="danger">{error}</Alert>}
-      <Form onSubmit={handleLogin}>
-        <Form.Group className="mb-3">
-          <Form.Label>Phone</Form.Label>
-          <Form.Control
+    <div className="container">
+      <h2>Login</h2>
+      {message && <div className="alert alert-info">{message}</div>}
+      <form onSubmit={handleSubmit}>
+        <div className="mb-3">
+          <label>Phone</label>
+          <input
             type="text"
-            placeholder="Enter phone"
+            className="form-control"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
+            required
           />
-        </Form.Group>
-        <Form.Group className="mb-3">
-          <Form.Label>License Plate</Form.Label>
-          <Form.Control
+        </div>
+        <div className="mb-3">
+          <label>License Plate</label>
+          <input
             type="text"
-            placeholder="Enter license plate"
+            className="form-control"
             value={plate}
             onChange={(e) => setPlate(e.target.value)}
+            required
           />
-        </Form.Group>
-        <Button variant="primary" type="submit">Login</Button>
-      </Form>
+        </div>
+        <button type="submit" className="btn btn-primary">Login</button>
+      </form>
     </div>
   );
 };

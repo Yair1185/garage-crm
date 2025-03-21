@@ -1,48 +1,70 @@
 // client/src/pages/admin/BlockedDays.jsx
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Button, Table, Form } from 'react-bootstrap';
 
 const BlockedDays = () => {
   const [blockedDays, setBlockedDays] = useState([]);
-  const [date, setDate] = useState('');
+  const [newDate, setNewDate] = useState('');
+  const [error, setError] = useState('');
+  const [message, setMessage] = useState('');
+
+  const fetchBlockedDays = async () => {
+    try {
+      const res = await axios.get('http://localhost:5000/blockedDays');
+      setBlockedDays(res.data);
+    } catch (err) {
+      setError('❌ Failed to load blocked days');
+    }
+  };
 
   useEffect(() => {
     fetchBlockedDays();
   }, []);
 
-  const fetchBlockedDays = async () => {
-    const res = await axios.get('http://localhost:5000/blockedDays');
-    setBlockedDays(res.data);
+  const handleBlockDate = async () => {
+    try {
+      await axios.post('http://localhost:5000/blockedDays/block', { date: newDate });
+      setMessage('✅ Date blocked successfully');
+      setNewDate('');
+      fetchBlockedDays();
+    } catch (err) {
+      setError('❌ Failed to block date');
+    }
   };
 
-  const blockDay = async () => {
-    await axios.post('http://localhost:5000/blockedDays/block', { date });
-    setDate('');
-    fetchBlockedDays();
-  };
-
-  const unblockDay = async (date) => {
-    await axios.delete(`http://localhost:5000/blockedDays/unblock/${date}`);
-    fetchBlockedDays();
+  const handleUnblockDate = async (date) => {
+    try {
+      await axios.delete(`http://localhost:5000/blockedDays/unblock/${date}`);
+      setMessage('✅ Date unblocked');
+      fetchBlockedDays();
+    } catch (err) {
+      setError('❌ Failed to unblock date');
+    }
   };
 
   return (
-    <div>
+    <div className="container">
       <h2>Manage Blocked Days</h2>
-      <Form>
-        <Form.Group className="mb-3">
-          <Form.Label>Select Date</Form.Label>
-          <Form.Control type="date" value={date} onChange={(e) => setDate(e.target.value)} />
-        </Form.Group>
-        <Button onClick={blockDay}>Block Date</Button>
-      </Form>
+      {error && <div className="alert alert-danger">{error}</div>}
+      {message && <div className="alert alert-success">{message}</div>}
 
-      <Table striped bordered hover className="mt-3">
+      <div className="mb-3">
+        <input
+          type="date"
+          value={newDate}
+          onChange={(e) => setNewDate(e.target.value)}
+          className="form-control"
+        />
+        <button className="btn btn-primary mt-2" onClick={handleBlockDate}>
+          Block Date
+        </button>
+      </div>
+
+      <table className="table table-striped">
         <thead>
           <tr>
             <th>Date</th>
-            <th>Action</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -50,14 +72,17 @@ const BlockedDays = () => {
             <tr key={day.id}>
               <td>{day.date}</td>
               <td>
-                <Button variant="danger" onClick={() => unblockDay(day.date)}>
+                <button
+                  className="btn btn-danger"
+                  onClick={() => handleUnblockDate(day.date)}
+                >
                   Unblock
-                </Button>
+                </button>
               </td>
             </tr>
           ))}
         </tbody>
-      </Table>
+      </table>
     </div>
   );
 };
