@@ -3,11 +3,7 @@ const { Pool } = require('pg');
 
 // ניתן להחליף ל-process.env.* עבור סביבה
 const pool = new Pool({
-  user: 'postgres',
-  host: 'localhost',
-  database: 'garage_crm',
-  password: '1234',  // שים לב - לשים ב .env בפרודקשן
-  port: 5432,        // ברירת מחדל PostgreSQL
+  connectionString: process.env.DATABASE_URL,
 });
 
 // בדיקת חיבור
