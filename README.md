@@ -1,95 +1,88 @@
-🚗 Garage CRM - מערכת ניהול מוסך מלאה
-ניהול לקוחות, רכבים, תיאום תורים וימים חסומים עבור מוסך. פרויקט Full-Stack כולל React, Node.js ו-PostgreSQL.
-📂 מבנה הפרויקט
+# 🚗 Garage CRM - מערכת ניהול מוסך (גרסה 2025)
 
-garage-crm/
-├── client/                 # React Frontend (Vite + React Router + Axios + Bootstrap)
-│   ├── src/
-│   │   ├── pages/          # מסכי לקוח ומנהל
-│   │   ├── api/            # קריאות API
-│   │   └── App.jsx         # ניתוב וקומפוננטות ראשיות
-│   └── vite.config.js
-├── src/                    # Node.js Express Backend
-│   ├── db/                 # חיבור ל-PostgreSQL
-│   ├── routes/             # REST API Routes
-│   ├── app.js
-│   ├── server.js
-│   ├── migration.sql
-│   ├── seedPostgres.js
-│   └── .env
-└── README.md
+ניהול לקוחות, רכבים, תורים, וימים חסומים עבור מוסך.
 
-🛠 טכנולוגיות
-- PostgreSQL
-- Node.js + Express
-- React.js + React Router
-- Axios
+## 📂 מבנה פרויקט
+📦 root/
+│── .env
+│── Dockerfile
+│── docker-compose.yml
+│── README.md
+│── src/ - Node.js Express Backend
+│ ├── server.js
+│ ├── routes/
+│ ├── db/index.js (PostgreSQL)
+│ ├── migration.sql
+│ ├── seedPostgres.js
+│── client/ - React Vite Frontend
+│ ├── src/
+│ │ ├── index.jsx
+│ │ ├── App.jsx
+│ │ ├── pages/ (RegisterPage, LoginPage, CustomerDashboard...)
+│ │ ├── api/ (axios endpoints)
+│ │ ├── components/
+│── package.json
+│── client/package.json
+
+markdown
+Copy
+Edit
+
+## 🛠 טכנולוגיות
+- PostgreSQL 17
+- Node.js / Express
+- React.js / Vite / React Router
 - Bootstrap 5
-- Vite
-🚀 הרצת הפרויקט
+- Docker / Docker Compose
+- dotenv
+- Jest / Supertest
 
-1️⃣ התקנת תלויות:
-cd garage-crm
+## 🚀 הפעלת הפרויקט
+
+### ✅ שרת API
+```bash
+cd ./garage-crm
 npm install
-cd client
+npm run dev
+http://localhost:5000
+
+✅ קליינט React
+bash
+Copy
+Edit
+cd ./garage-crm/client
 npm install
-
-2️⃣ הפעלת PostgreSQL:
-createdb -U postgres garage_crm
-psql -U postgres -d garage_crm -f src/migration.sql
-node src/seedPostgres.js
-
-3️⃣ הרצת השרת (Backend):
 npm run dev
+http://localhost:5173
 
-4️⃣ הרצת ה-Frontend (React):
-cd client
-npm run dev
+✅ PostgreSQL (קונפיגורציה)
+קובץ .env
 
-📌 REST API עיקרי
-Endpoint
-Method
-תיאור
-/customers/register
-POST
-רישום לקוח והוספת רכב
-/customers/login
-POST
-התחברות לקוח
-/customers/dashboard
-GET
-דשבורד לקוח
-/appointments
-GET/POST
-ניהול תורים
-/blockedDays
-GET
-שליפת ימים חסומים
-/blockedDays/block
-POST
-חסימת יום
-/blockedDays/unblock/:date
-DELETE
-ביטול חסימה של תאריך
-/manager/login
-POST
-התחברות מנהל
-🌐 Frontend (React) כתובות עיקריות
+bash
+Copy
+Edit
+DATABASE_URL=postgresql://postgres:1185@localhost:5432/garage_crm
+pg_hba.conf: trust
 
-/               -> HomePage
-/register       -> RegisterPage
-/login          -> LoginPage
-/dashboard      -> CustomerDashboard
-/admin          -> AdminDashboard
+פקודת התחברות:
 
-✅ Features
-
-- תיאום תורים לפי שעות פעילות
-- חסימת תאריכים (ללא שבתות)
-- ניהול לקוחות ורכבים
-- הרשאה למנהל בלבד
-- REST API מלא
-- ממשק רספונסיבי עם Bootstrap
-
-📞 צור קשר
-🔗 GitHub Repository: https://github.com/Yair1185/garage-crm
+bash
+Copy
+Edit
+psql -h localhost -U postgres -d garage_crm
+📌 Endpoints עיקריים
+Route	Method	Description
+/customers/register	POST	רישום לקוח חדש
+/customers/login	POST	התחברות לקוח
+/customers/dashboard	GET	דאשבורד לקוח
+/customers/add-vehicle	POST	הוספת רכב ללקוח
+/appointments	GET/POST	ניהול תורים
+/blockedDays	GET/POST/DELETE	ימים חסומים
+🗒️ משימות להמשך הפרויקט (Roadmap):
+✅ 1. ✅ עיצוב דף הבית - מודרני, רספונסיבי, עם אנימציות.
+✅ 2. התאמת מערכת הרשאות - לקוחות / מנהלים.
+✅ 3. אבטחת API עם JWT / Session + CORS מוגבל.
+✅ 4. יצוא לקובץ PDF של התורים / היסטוריית רכבים.
+✅ 5. טסטים נוספים לכל ה-API.
+✅ 6. פריסה מלאה עם Docker Compose.
+✅ 7. תמיכה במשתמשים מרובים בו זמנית (WebSocket/Socket.io).

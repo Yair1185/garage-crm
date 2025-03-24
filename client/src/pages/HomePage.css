@@ -1,0 +1,97 @@
+/* ✅ client/src/pages/HomePage.css */
+.homepage {
+    direction: rtl;
+    min-height: 100vh;
+    background-color: #f8f9fa;
+    padding: 1rem;
+    position: relative;
+    text-align: center;
+  }
+
+  .logo-container {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+  }
+  
+/* ✅ שליטה על גודל הלוגו */
+
+.logo {
+    max-width: 80px;
+    max-height: 80px;
+    object-fit: contain;
+  }
+  
+  /* ✅ שמירה על רספונסיביות */
+  @media (min-width: 768px) {
+    .logo {
+      max-width: 150px;
+      max-height: 150px;
+    }
+  }
+
+  .personal-area {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background-color: #17a2b8;
+    color: #fff;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  
+  .content {
+    margin-top: 5rem;
+  }
+  
+  .content h1 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+  
+  .content p {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+  }
+  
+  .register-btn, .admin-btn {
+    display: block;
+    width: 90%;
+    max-width: 300px;
+    margin: 0 auto 1rem auto;
+    padding: 1rem;
+    font-size: 1.2rem;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .register-btn {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+  }
+  
+  .admin-btn {
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+  }
+  
+  /* ✅ רספונסיביות */
+  @media (min-width: 768px) {
+    .content h1 {
+      font-size: 3rem;
+    }
+  
+    .content p {
+      font-size: 1.5rem;
+    }
+  
+    .register-btn, .admin-btn {
+      font-size: 1.4rem;
+    }
+  }
+  

@@ -31,24 +31,25 @@ router.post('/register', async (req, res) => {
 });
 
 // ✅ התחברות לקוח
-router.post('/login', async (req, res) => {
+router.post('/login', (req, res) => {
   const { phone, plate } = req.body;
+  
+  const sql = `
+    SELECT customers.id AS customer_id
+    FROM customers
+    JOIN vehicles ON customers.id = vehicles.customer_id
+    WHERE customers.phone = $1 AND vehicles.plate = $2
+  `;
 
-  try {
-    const result = await pool.query(
-      `SELECT c.id AS customer_id FROM customers c JOIN vehicles v ON c.id = v.customer_id WHERE c.phone = $1 AND v.plate = $2`,
-      [phone, plate]
-    );
-
-    if (result.rowCount === 0) return res.status(401).json({ error: 'Invalid credentials' });
+  db.query(sql, [phone, plate], (err, result) => {
+    if (err) return res.status(500).json({ error: 'Database error' });
+    if (result.rows.length === 0) return res.status(401).json({ error: 'Invalid credentials' });
 
     req.session.customerId = result.rows[0].customer_id;
     res.status(200).json({ message: 'Login successful' });
-  } catch (err) {
-    console.error('❌ Error during login:', err);
-    res.status(500).json({ error: 'Database error' });
-  }
+  });
 });
+
 
 // ✅ Dashboard לקוח
 router.get('/dashboard', async (req, res) => {

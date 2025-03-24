@@ -1,17 +1,36 @@
 // ✅ client/src/pages/HomePage.jsx
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import './HomePage.css';
 
 const HomePage = () => {
-  return (
-    <div className="text-center">
-      <h1 className="mb-4">🚗 Garage CRM - דף הבית</h1>
-      <p>ניהול לקוחות, רכבים ותיאום תורים למוסך</p>
+  const navigate = useNavigate();
 
-      <div className="mt-5 d-flex justify-content-center gap-3">
-        <Link to="/register" className="btn btn-primary">הירשם כלקוח</Link>
-        <Link to="/login" className="btn btn-success">התחבר</Link>
-        <Link to="/dashboard" className="btn btn-info">מעבר ללוח בקרה</Link>
+  return (
+    <div className="homepage">
+      {/* ✅ לוגו בפינה השמאלית העליונה */}
+      <div className="logo-container">
+      <img
+        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTU-17_15Lvg-L8KDgGhJgBJ89dwqVeisKQgQ&s"
+        alt="לוגו המוסך"
+        className="logo"
+      />
+</div>
+      <button className="personal-area" onClick={() => navigate('/dashboard')}>
+        איזור אישי
+      </button>
+
+      <div className="content">
+        <h1>ברוכים הבאים למוסך מרכבת המשנה</h1>
+        <p>ניהול לקוחות, רכבים ותיאום תורים למוסך</p>
+
+        <button className="register-btn" onClick={() => navigate('/register')}>
+          הרשמה
+        </button>
+
+        <button className="admin-btn" onClick={() => navigate('/admin')}>
+          כניסה לצוות
+        </button>
       </div>
     </div>
   );

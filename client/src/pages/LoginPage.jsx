@@ -12,7 +12,7 @@ const LoginPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await loginCustomer({ phone, license_plate: plate });
+      const res = await loginCustomer({ phone, plate: licensePlate });
       setMessage('✅ Login successful');
       navigate('/dashboard');
     } catch (err) {
