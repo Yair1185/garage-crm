@@ -28,7 +28,8 @@ const App = () => {
             </ProtectedRoute>
           }
         />
-
+        <Route path="/admin-login" element={<AdminLoginPage />} />
+        <Route path="/admin" element={<AdminDashboard />} />
         <Route
           path="/admin"
           element={

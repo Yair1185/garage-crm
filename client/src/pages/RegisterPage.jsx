@@ -1,18 +1,18 @@
-// client/src/pages/RegisterPage.jsx
 import React, { useState } from 'react';
 import { registerCustomer } from '../api/customers';
 import { useNavigate } from 'react-router-dom';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const RegisterPage = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
     email: '',
     model: '',
-    plate: ''
+    plate: '',
   });
-  const [message, setMessage] = useState('');
-  const navigate = useNavigate();
+  const [error, setError] = useState('');
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -21,40 +21,44 @@ const RegisterPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await registerCustomer(formData);
-      setMessage('✅ Registration successful');
+      await registerCustomer(formData);
       navigate('/login');
     } catch (err) {
-      setMessage(err.response?.data?.error || '❌ Registration failed');
+      setError('שגיאה בהרשמה. נסה שוב');
     }
   };
 
   return (
-    <div className="container">
-      <h2>Register</h2>
-      {message && <div className="alert alert-info">{message}</div>}
-      <form onSubmit={handleSubmit}>
+    <div className="container mt-5" dir="rtl">
+      <h2 className="text-center mb-4">הרשמת לקוח חדש</h2>
+      {error && <div className="alert alert-danger">{error}</div>}
+      <form onSubmit={handleSubmit} className="border p-4 rounded bg-light shadow">
         <div className="mb-3">
-          <label>Name</label>
-          <input type="text" name="name" className="form-control" onChange={handleChange} required />
+          <label className="form-label">שם מלא</label>
+          <input type="text" className="form-control" name="name" value={formData.name} onChange={handleChange} required />
         </div>
+
         <div className="mb-3">
-          <label>Phone</label>
-          <input type="text" name="phone" className="form-control" onChange={handleChange} required />
+          <label className="form-label">מספר טלפון</label>
+          <input type="tel" className="form-control" name="phone" value={formData.phone} onChange={handleChange} required />
         </div>
+
         <div className="mb-3">
-          <label>Email</label>
-          <input type="email" name="email" className="form-control" onChange={handleChange} required />
+          <label className="form-label">אימייל</label>
+          <input type="email" className="form-control" name="email" value={formData.email} onChange={handleChange} required />
         </div>
+
         <div className="mb-3">
-          <label>Vehicle Model</label>
-          <input type="text" name="model" className="form-control" onChange={handleChange} required />
+          <label className="form-label">דגם רכב</label>
+          <input type="text" className="form-control" name="model" value={formData.model} onChange={handleChange} required />
         </div>
+
         <div className="mb-3">
-          <label>License Plate</label>
-          <input type="text" name="plate" className="form-control" onChange={handleChange} required />
+          <label className="form-label">מספר רישוי</label>
+          <input type="text" className="form-control" name="plate" value={formData.plate} onChange={handleChange} required />
         </div>
-        <button type="submit" className="btn btn-primary">Register</button>
+
+        <button type="submit" className="btn btn-primary w-100">הרשמה</button>
       </form>
     </div>
   );
