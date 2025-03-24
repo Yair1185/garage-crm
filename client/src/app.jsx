@@ -9,6 +9,7 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import BlockedDays from './pages/admin/BlockedDays';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import ProtectedRoute from './components/ProtectedRoute';
+import AdminLoginPage from './pages/admin/AdminLoginPage';
 
 const isAuthenticated = true;
 
