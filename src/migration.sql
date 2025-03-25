@@ -20,11 +20,12 @@ CREATE TABLE vehicles (
 
 CREATE TABLE appointments (
   id SERIAL PRIMARY KEY,
-  customer_id INTEGER REFERENCES customers(id),
-  vehicle_id INTEGER REFERENCES vehicles(id),
-  service TEXT NOT NULL,
-  date DATE NOT NULL,
-  status TEXT DEFAULT 'scheduled'
+  customer_id INT REFERENCES customers(id),
+  vehicle_id INT REFERENCES vehicles(id),
+  appointment_date DATE NOT NULL,
+  appointment_time TIME NOT NULL,
+  service_type VARCHAR(50),
+  status VARCHAR(20) DEFAULT 'מאושר'
 );
 
 CREATE TABLE blocked_days (

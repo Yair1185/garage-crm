@@ -1,68 +1,65 @@
-// client/src/pages/CustomerDashboard.jsx
-import React, { useState, useEffect } from 'react';
-import { fetchDashboard, logoutCustomer } from '../api/customers';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { Link } from 'react-router-dom';
 
-const CustomerDashboard = () => {
+export default function CustomerDashboard() {
   const [customer, setCustomer] = useState(null);
   const [vehicles, setVehicles] = useState([]);
   const [appointments, setAppointments] = useState([]);
-  const [error, setError] = useState('');
-  const navigate = useNavigate();
+  const [message, setMessage] = useState('');
 
   useEffect(() => {
-    const loadDashboard = async () => {
-      try {
-        const res = await fetchDashboard();
+    axios.get('http://localhost:5000/customers/dashboard', { withCredentials: true })
+      .then(res => {
         setCustomer(res.data.customer);
         setVehicles(res.data.vehicles);
         setAppointments(res.data.appointments);
-      } catch (err) {
-        setError(err.response?.data?.error || '❌ Failed to load dashboard');
-      }
-    };
-    loadDashboard();
+      })
+      .catch(() => setMessage('שגיאה בטעינת הנתונים'));
   }, []);
 
-  const handleLogout = async () => {
-    await logoutCustomer();
-    navigate('/login');
-  };
-
   return (
-    <div className="container">
-      <h2>Customer Dashboard</h2>
-      {error && <div className="alert alert-danger">{error}</div>}
-      {customer && (
-        <div className="mb-4">
-          <h4>Welcome, {customer.name}</h4>
-          <p>Email: {customer.email}</p>
-          <p>Phone: {customer.phone}</p>
+    <div className="home-container">
+      <div className="home-card shadow-lg">
+        <h3 className="fw-bold text-center">אזור אישי</h3>
+        {message && <div className="alert alert-danger mt-3">{message}</div>}
+
+        {customer && (
+          <div className="text-end">
+            <p><strong>שם:</strong> {customer.name}</p>
+            <p><strong>טלפון:</strong> {customer.phone}</p>
+            <p><strong>אימייל:</strong> {customer.email}</p>
+          </div>
+        )}
+
+        <h5 className="mt-4">הרכבים שלי:</h5>
+        {vehicles.length > 0 ? (
+          <ul className="list-group">
+            {vehicles.map(v => (
+              <li key={v.id} className="list-group-item d-flex justify-content-between">
+                <span>{v.model}</span> <span>{v.plate}</span>
+              </li>
+            ))}
+          </ul>
+        ) : <p>לא נמצאו רכבים</p>}
+
+        <h5 className="mt-4">התורים שלי:</h5>
+        {appointments.length > 0 ? (
+          <ul className="list-group">
+            {appointments.map(app => (
+              <li key={app.id} className="list-group-item">
+                {app.appointment_date} - {app.appointment_time} - {app.service_type}
+              </li>
+            ))}
+          </ul>
+        ) : <p>אין תורים עתידיים</p>}
+
+        <div className="mt-4 d-grid gap-3">
+          <Link to="/new-appointment" className="btn btn-primary rounded-pill">קבע תור חדש</Link>
+          <Link to="/my-appointments" className="btn btn-outline-secondary rounded-pill">צפה בתורים</Link>
+          <Link to="/" className="btn btn-dark rounded-pill">חזור לדף הבית</Link>
         </div>
-      )}
-      <div className="mb-4">
-        <h5>Vehicles</h5>
-        <ul className="list-group">
-          {vehicles.map((vehicle) => (
-            <li key={vehicle.id} className="list-group-item">
-              {vehicle.model} - {vehicle.plate}
-            </li>
-          ))}
-        </ul>
       </div>
-      <div className="mb-4">
-        <h5>Appointments</h5>
-        <ul className="list-group">
-          {appointments.map((appt) => (
-            <li key={appt.id} className="list-group-item">
-              {appt.date} - {appt.service} ({appt.status})
-            </li>
-          ))}
-        </ul>
-      </div>
-      <button className="btn btn-danger" onClick={handleLogout}>Logout</button>
     </div>
   );
-};
-
-export default CustomerDashboard;
+}

@@ -10,6 +10,7 @@ import BlockedDays from './pages/admin/BlockedDays';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminLoginPage from './pages/admin/AdminLoginPage';
+import CustomerNewAppointment from './pages/CustomerNewAppointment';
 
 const isAuthenticated = true;
 
@@ -29,8 +30,9 @@ const App = () => {
             </ProtectedRoute>
           }
         />
+
         <Route path="/admin-login" element={<AdminLoginPage />} />
-        <Route path="/admin" element={<AdminDashboard />} />
+        
         <Route
           path="/admin"
           element={
@@ -45,6 +47,16 @@ const App = () => {
           element={
             <ProtectedRoute isAuthenticated={isAuthenticated}>
               <BlockedDays />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* ✅ הכנסתי את זה פנימה */}
+        <Route
+          path="/new-appointment"
+          element={
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <CustomerNewAppointment />
             </ProtectedRoute>
           }
         />

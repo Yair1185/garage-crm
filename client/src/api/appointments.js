@@ -1,7 +1,10 @@
-// ✅ client/src/api/appointments.js
 import axios from 'axios';
 
-const API = axios.create({ baseURL: 'http://localhost:5000' });
+const api = axios.create({
+  baseURL: 'http://localhost:5000',
+  withCredentials: true
+});
 
-export const getAppointments = () => API.get('/appointments');
-export const createAppointment = (data) => API.post('/appointments', data);
+export const createAppointment = (data) => api.post('/appointments', data);
+export const getMyAppointments = () => api.get('/appointments/my');
+export const cancelAppointment = (id) => api.delete(`/appointments/${id}`);

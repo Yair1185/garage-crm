@@ -1,62 +1,45 @@
 import React, { useState } from 'react';
-import { loginCustomer } from '../api/customers';
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import 'bootstrap/dist/css/bootstrap.min.css';
 
-const LoginPage = () => {
+export default function LoginPage() {
+  const [phone, setPhone] = useState('');
+  const [plate, setPlate] = useState('');
+  const [message, setMessage] = useState('');
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({ phone: '', plate: '' });
-  const [error, setError] = useState('');
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    try {
-      const res = await loginCustomer(formData);
-      if (res.status === 200) {
-        navigate('/dashboard');
-      }
-    } catch (err) {
-      setError('פרטי ההתחברות שגויים, אנא נסה שוב');
-    }
+    axios.post('http://localhost:5000/customers/login', { phone, plate }, { withCredentials: true })
+      .then(() => {
+        setMessage('התחברת בהצלחה!');
+        setTimeout(() => navigate('/dashboard'), 1500);
+      })
+      .catch(err => setMessage(err.response?.data?.error || 'שגיאה בהתחברות'));
   };
 
   return (
-    <div className="container mt-5" dir="rtl">
-      <h2 className="text-center mb-4">התחברות לקוח</h2>
-      {error && <div className="alert alert-danger">{error}</div>}
-      <form onSubmit={handleSubmit} className="border p-4 rounded bg-light shadow">
-        <div className="mb-3">
-          <label className="form-label">מספר טלפון</label>
-          <input
-            type="tel"
-            className="form-control"
-            name="phone"
-            value={formData.phone}
-            onChange={handleChange}
-            required
-          />
-        </div>
+    <div className="home-container">
+      <div className="home-card shadow-lg">
+        <h3 className="fw-bold">התחברות לאזור האישי</h3>
+        {message && <div className="alert alert-info mt-3">{message}</div>}
+        <form onSubmit={handleSubmit} className="mt-4">
 
-        <div className="mb-3">
-          <label className="form-label">מספר רישוי רכב</label>
-          <input
-            type="text"
-            className="form-control"
-            name="plate"
-            value={formData.plate}
-            onChange={handleChange}
-            required
-          />
-        </div>
+          <div className="mb-3 text-end">
+            <label className="form-label">מספר טלפון</label>
+            <input type="text" className="form-control" value={phone}
+              onChange={(e) => setPhone(e.target.value)} required />
+          </div>
 
-        <button type="submit" className="btn btn-primary w-100">התחבר</button>
-      </form>
+          <div className="mb-3 text-end">
+            <label className="form-label">מספר רכב (לוחית רישוי)</label>
+            <input type="text" className="form-control" value={plate}
+              onChange={(e) => setPlate(e.target.value)} required />
+          </div>
+
+          <button type="submit" className="btn btn-success w-100 rounded-pill">התחבר</button>
+        </form>
+      </div>
     </div>
   );
-};
-
-export default LoginPage;
+}
