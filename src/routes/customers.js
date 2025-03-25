@@ -87,6 +87,7 @@ router.get('/dashboard', async (req, res) => {
     console.error('❌ Error fetching dashboard:', err);
     res.status(500).json({ error: 'Failed to fetch dashboard' });
   }
+  console.log('✅ Current Session:', req.session);
 });
 
 // ✅ הוספת רכב ללקוח
