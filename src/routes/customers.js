@@ -30,10 +30,15 @@ router.post('/register', async (req, res) => {
   }
 });
 
-// ✅ התחברות לקוח
-router.post('/login', (req, res) => {
+// ✅ Login Route - Modern Version with async/await
+router.post('/login', async (req, res) => {
   const { phone, plate } = req.body;
-  
+
+  // בדיקה שהשדות לא ריקים
+  if (!phone || !plate) {
+    return res.status(400).json({ error: 'Phone and Plate are required' });
+  }
+
   const sql = `
     SELECT customers.id AS customer_id
     FROM customers
@@ -41,14 +46,23 @@ router.post('/login', (req, res) => {
     WHERE customers.phone = $1 AND vehicles.plate = $2
   `;
 
-  db.query(sql, [phone, plate], (err, result) => {
-    if (err) return res.status(500).json({ error: 'Database error' });
-    if (result.rows.length === 0) return res.status(401).json({ error: 'Invalid credentials' });
+  try {
+    const result = await pool.query(sql, [phone, plate]);
 
+    if (result.rows.length === 0) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    // שמירת הלקוח ב-session
     req.session.customerId = result.rows[0].customer_id;
-    res.status(200).json({ message: 'Login successful' });
-  });
+    res.status(200).json({ message: 'Login successful', customerId: result.rows[0].customer_id });
+
+  } catch (err) {
+    console.error('❌ Login error:', err);
+    res.status(500).json({ error: 'Database error' });
+  }
 });
+
 
 
 // ✅ Dashboard לקוח
