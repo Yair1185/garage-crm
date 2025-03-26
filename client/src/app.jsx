@@ -13,7 +13,7 @@ import AdminLoginPage from './pages/admin/AdminLoginPage';
 import CustomerNewAppointment from './pages/CustomerNewAppointment';
 import CustomerDetails from './pages/CustomerDetails';
 const isAuthenticated = true;
-
+import CustomerPastAppointments from './pages/CustomerPastAppointments';
 const App = () => {
   return (
     <div className="container mt-4">
@@ -48,6 +48,14 @@ const App = () => {
             </ProtectedRoute>
           }
         />
+        <Route
+  path="/my-appointments"
+  element={
+    <ProtectedRoute isAuthenticated={isAuthenticated}>
+      <CustomerPastAppointments />
+    </ProtectedRoute>
+  }
+/>
 
         <Route
           path="/admin/blocked-days"
@@ -57,7 +65,14 @@ const App = () => {
             </ProtectedRoute>
           }
         />
-
+<Route
+  path="/my-appointments"
+  element={
+    <ProtectedRoute isAuthenticated={isAuthenticated}>
+      <CustomerPastAppointments />
+    </ProtectedRoute>
+  }
+/>
         {/* ✅ הכנסתי את זה פנימה */}
         <Route
           path="/new-appointment"

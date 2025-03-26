@@ -50,6 +50,30 @@ router.get('/', async (req, res) => {
   }
 });
 
+// ✅ תורים קודמים
+router.get('/past', async (req, res) => {
+  const customerId = req.session.customerId;
+  if (!customerId) return res.status(401).json({ error: 'Unauthorized' });
+
+  try {
+    const result = await pool.query(`
+      SELECT a.*, v.model, v.plate
+      FROM appointments a
+      JOIN vehicles v ON a.vehicle_id = v.id
+      WHERE a.customer_id = $1
+        AND (appointment_date < CURRENT_DATE OR 
+             (appointment_date = CURRENT_DATE AND appointment_time < CURRENT_TIME))
+      ORDER BY appointment_date DESC
+    `, [customerId]);
+
+    res.status(200).json(result.rows);
+  } catch (err) {
+    console.error('❌ Error fetching past appointments:', err);
+    res.status(500).json({ error: 'Failed to fetch past appointments' });
+  }
+});
+
+
 // ✅ שליפת תורים של הלקוח
 router.get('/my', async (req, res) => {
   const customerId = req.session.customerId;
