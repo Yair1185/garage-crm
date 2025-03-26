@@ -73,6 +73,14 @@ const App = () => {
     </ProtectedRoute>
   }
 />
+<Route
+  path="/profile"
+  element={
+    <ProtectedRoute isAuthenticated={isAuthenticated}>
+      <CustomerProfile />
+    </ProtectedRoute>
+  }
+/>
         {/* ✅ הכנסתי את זה פנימה */}
         <Route
           path="/new-appointment"

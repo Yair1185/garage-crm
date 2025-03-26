@@ -47,7 +47,13 @@ export default function CustomerDashboard() {
             <Button variant="outline-success" onClick={() => navigate('/new-appointment')}>
               קבע תור חדש
             </Button>
+            
+          
           )}
+          <Button variant="outline-primary" onClick={() => navigate('/profile')}>
+  הפרטים שלי
+</Button>
+
           <Button variant="outline-secondary" onClick={() => navigate('/my-appointments')}>
             תורים קודמים
           </Button>

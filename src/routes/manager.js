@@ -24,6 +24,26 @@ router.post('/login', async (req, res) => {
   }
 });
 
+// ✅ גרף: תורים עתידיים לפי יום
+router.get('/appointments-per-day', async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT appointment_date AS date, COUNT(*) AS count
+      FROM appointments
+      WHERE appointment_date >= CURRENT_DATE
+      GROUP BY appointment_date
+      ORDER BY appointment_date
+      LIMIT 7
+    `);
+
+    res.status(200).json(result.rows);
+  } catch (err) {
+    console.error('❌ Error fetching appointment stats:', err);
+    res.status(500).json({ error: 'Failed to fetch data' });
+  }
+});
+
+
 // ✅ Middleware הגנה לכל המסלולים למעט login ו logout
 router.use((req, res, next) => {
   if (!req.session.managerId && req.path !== '/login' && req.path !== '/logout') {
