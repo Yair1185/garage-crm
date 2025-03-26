@@ -11,23 +11,23 @@ router.post('/', async (req, res) => {
 
   try {
     // בדיקה אם היום חסום
-    const blocked = await pool.query('SELECT * FROM blocked_days WHERE date = $1', [appointment_date]);
+    const blocked = await pool.query('SELECT * FROM blocked_days WHERE appointment_date = $1', [appointment_date]);
     if (blocked.rows.length) return res.status(400).json({ error: 'לא ניתן להזמין בתאריך זה' });
 
     // בדיקת מגבלת תורים יומית
-    const count = await pool.query('SELECT COUNT(*) FROM appointments WHERE date = $1', [appointment_date]);
+    const count = await pool.query('SELECT COUNT(*) FROM appointments WHERE appointment_date = $1', [appointment_date]);
     if (parseInt(count.rows[0].count) >= 8) return res.status(400).json({ error: 'אין מקום פנוי בתאריך זה' });
 
     // בדיקה אם ללקוח יש תור פעיל
     const existing = await pool.query(
-      'SELECT * FROM appointments WHERE customer_id = $1 AND date >= CURRENT_DATE',
+      'SELECT * FROM appointments WHERE customer_id = $1 AND appointment_date >= CURRENT_DATE',
       [customerId]
     );
     if (existing.rows.length) return res.status(400).json({ error: 'יש לך כבר תור פעיל' });
 
     // יצירת תור חדש
     await pool.query(`
-      INSERT INTO appointments (customer_id, vehicle_id, date, appointment_time, service_type, status)
+      INSERT INTO appointments (customer_id, vehicle_id, appointment_date, appointment_time, service_type, status)
       VALUES ($1, $2, $3, $4, $5, 'מאושר')
     `, [customerId, vehicle_id, appointment_date, appointment_time, service_type]);
     
@@ -61,7 +61,7 @@ router.get('/my', async (req, res) => {
       FROM appointments a
       JOIN vehicles v ON a.vehicle_id = v.id
       WHERE a.customer_id = $1
-      ORDER BY a.date
+      ORDER BY a.appointment_date
     `, [customerId]);
     res.status(200).json(result.rows);
   } catch (err) {

@@ -25,7 +25,7 @@ CREATE TABLE appointments (
   appointment_date DATE NOT NULL,
   appointment_time TIME NOT NULL,
   service_type VARCHAR(50),
-  status VARCHAR(20) DEFAULT 'מאושר'
+  status VARCHAR(20) DEFAULT '?????'
 );
 
 CREATE TABLE blocked_days (
