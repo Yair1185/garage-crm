@@ -11,7 +11,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminLoginPage from './pages/admin/AdminLoginPage';
 import CustomerNewAppointment from './pages/CustomerNewAppointment';
-
+import CustomerDetails from './pages/CustomerDetails';
 const isAuthenticated = true;
 
 const App = () => {
@@ -30,7 +30,14 @@ const App = () => {
             </ProtectedRoute>
           }
         />
-
+<Route
+  path="/my-details"
+  element={
+    <ProtectedRoute isAuthenticated={isAuthenticated}>
+      <CustomerDetails />
+    </ProtectedRoute>
+  }
+/>
         <Route path="/admin-login" element={<AdminLoginPage />} />
         
         <Route

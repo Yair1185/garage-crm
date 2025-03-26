@@ -64,7 +64,6 @@ router.post('/login', async (req, res) => {
 });
 
 
-
 // ✅ Dashboard לקוח
 router.get('/dashboard', async (req, res) => {
   if (!req.session.customerId) return res.status(401).json({ error: 'Unauthorized' });
@@ -88,6 +87,31 @@ router.get('/dashboard', async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch dashboard' });
   }
   console.log('✅ Current Session:', req.session);
+});
+
+
+js
+Copy
+Edit
+// ✅ עדכון פרטי לקוח ורכב
+router.put('/update', async (req, res) => {
+  const customerId = req.session.customerId;
+  const { phone, email, vehicles } = req.body;
+
+  if (!customerId) return res.status(401).json({ error: 'Unauthorized' });
+
+  try {
+    await pool.query(`UPDATE customers SET phone = $1, email = $2 WHERE id = $3`, [phone, email, customerId]);
+
+    for (const v of vehicles) {
+      await pool.query(`UPDATE vehicles SET model = $1, plate = $2 WHERE id = $3 AND customer_id = $4`, [v.model, v.plate, v.id, customerId]);
+    }
+
+    res.status(200).json({ message: 'פרטים עודכנו בהצלחה' });
+  } catch (err) {
+    console.error("❌ Error updating customer info:", err);
+    res.status(500).json({ error: 'שגיאה בעדכון פרטים' });
+  }
 });
 
 // ✅ הוספת רכב ללקוח

@@ -11,7 +11,7 @@ router.post('/', async (req, res) => {
 
   try {
     // בדיקה אם היום חסום
-    const blocked = await pool.query('SELECT * FROM blocked_days WHERE appointment_date = $1', [appointment_date]);
+    const blocked = await pool.query('SELECT * FROM blocked_days WHERE date = $1', [appointment_date]);
     if (blocked.rows.length) return res.status(400).json({ error: 'לא ניתן להזמין בתאריך זה' });
 
     // בדיקת מגבלת תורים יומית
