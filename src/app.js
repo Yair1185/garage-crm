@@ -13,13 +13,15 @@ app.use(express.json());
 
 // 📌 Middleware
 app.use(cors({ origin: "http://localhost:5173", credentials: true }));
-app.use('/blockedDays', blockedRoutes);
 app.use(session({
   secret: process.env.SESSION_SECRET || "supersecret",
   resave: false,
   saveUninitialized: false,
   cookie: { secure: false,httpOnly: true  }
 }));
+
+
+app.use('/blockedDays', blockedRoutes);
 
 // 📌 Routes
 app.use('/customers', customerRoutes);

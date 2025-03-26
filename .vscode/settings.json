@@ -1,0 +1,6 @@
+{
+    "files.autoGuessEncoding": false,
+    "files.candidateGuessEncodings": [
+        "utf8"
+    ]
+}
