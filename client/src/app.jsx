@@ -15,6 +15,8 @@ import CustomerDetails from './pages/CustomerDetails';
 const isAuthenticated = true;
 import CustomerPastAppointments from './pages/CustomerPastAppointments';
 import AddAdminPage from './pages/admin/AddAdminPage';
+import CustomerProfile from './pages/CustomerProfile';
+
 const App = () => {
   return (
     <div className="container mt-4">
@@ -67,15 +69,7 @@ const App = () => {
           }
         />
 <Route
-  path="/my-appointments"
-  element={
-    <ProtectedRoute isAuthenticated={isAuthenticated}>
-      <CustomerPastAppointments />
-    </ProtectedRoute>
-  }
-/>
 
-<Route
   path="/admin/add"
   element={
     <ProtectedRoute isAuthenticated={isAuthenticated}>

@@ -3,6 +3,9 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Card, Button, Table, Row, Col } from 'react-bootstrap';
 import { Bar } from 'react-chartjs-2';
+import { Chart as ChartJS, BarElement, CategoryScale, LinearScale } from 'chart.js';
+      ChartJS.register(BarElement, CategoryScale, LinearScale); 
+
 const AdminDashboard = () => {
   const [stats, setStats] = useState({});
   const [customers, setCustomers] = useState([]);
@@ -138,8 +141,7 @@ const AdminDashboard = () => {
         </tbody>
       </Table>
      
-      import { Chart as ChartJS, BarElement, CategoryScale, LinearScale } from 'chart.js';
-      ChartJS.register(BarElement, CategoryScale, LinearScale); 
+      
       <h4 className="mt-5">עומסים בשבוע הקרוב</h4>
 {chartData.labels && (
   <Bar data={chartData} options={{ responsive: true, plugins: { legend: { display: false } } }} />
