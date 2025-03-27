@@ -1,73 +1,27 @@
-.home-container {
-  padding: 20px;
-  background: linear-gradient(to bottom, #e0f7fa, #b2ebf2);
-  min-height: 100vh;
+.home-card {
+  max-width: 600px;
+  border-radius: 16px;
+  margin-top: 80px; /* מרחיק את הכרטיס מהכפתורים */
+}
+
+.icon-btn {
+  width: 44px;
+  height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
+  border-radius: 8px;
+  font-size: 1.2rem;
+  background-color: white;
+  border: 1px solid #ccc;
+  transition: all 0.2s ease;
 }
 
-.home-card {
-  background: rgba(255, 255, 255, 0.8);
-  border-radius: 20px;
-  padding: 25px;
-  max-width: 450px;
-  width: 100%;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-  color: #333;
-  text-align: center;
+.icon-btn:hover {
+  background-color: #f1f1f1;
 }
 
-.home-card h2 {
-  color: #007bff;
-}
-
-.home-card ul {
-  text-align: right;
-  padding-right: 0;
-  list-style: none;
-}
-
-.home-card li {
-  margin-bottom: 10px;
-  font-size: 1rem;
-}
-
-.btn {
-  font-size: 1rem;
-}
-
-.btn-primary {
-  background-color: #007bff;
-  border: none;
-}
-
-.btn-success {
-  background-color: #28a745;
-  border: none;
-}
-
-.btn-outline-info,
-.btn-outline-danger {
-  font-weight: bold;
-}
-
-.btn-outline-info:hover {
-  background-color: #17a2b8;
-  color: #fff;
-}
-
-.btn-outline-danger:hover {
-  background-color: #dc3545;
-  color: #fff;
-}
-
-form input {
-  text-align: right;
-}
-
-form button {
-  font-weight: bold;
+.header-buttons {
+  gap: 10px;
+  z-index: 10;
 }

@@ -1,44 +1,55 @@
+import React from 'react';
 import './HomePage.css';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { Button } from 'react-bootstrap';
+import 'bootstrap-icons/font/bootstrap-icons.css';
 
 export default function HomePage() {
+  const navigate = useNavigate();
+
   return (
-    <div className="home-container">
-      <div className="home-card shadow-lg">
+    <div className="container position-relative mt-4">
+  {/* כפתורים עליונים */}
+  <div className="position-absolute top-0 end-0 p-3 d-flex header-buttons">
+    <Button variant="outline-dark" className="icon-btn" onClick={() => navigate('/register')} title="הרשמה">
+      <i className="bi bi-person-plus"></i>
+    </Button>
+    <Button variant="outline-dark" className="icon-btn" onClick={() => navigate('/admin-login')} title="כניסת צוות">
+      <i className="bi bi-person-badge"></i>
+    </Button>
+    <Button variant="outline-dark" className="icon-btn" onClick={() => navigate('/login')} title="אזור אישי">
+      <i className="bi bi-person-circle"></i>
+    </Button>
+  </div>
 
-        <h2 className="text-center fw-bold">🚗 המוסך המקומי שלך בבאר שבע</h2>
-        <p className="text-center">שירות אמין ומקצועי לרכב שלך, כבר 8 שנים!</p>
+      {/* כרטיס מרכזי */}
+      <div className="home-card mx-auto shadow-lg text-end p-4 bg-white mt-5">
+        <h2 className="fw-bold mb-2">ברוכים הבאים 🚗</h2>
+        <p className="text-muted">שירות מקצועי, אמין ומסור לרכב שלך<br />כבר מעל 8 שנים!</p>
 
-        <ul className="list-unstyled">
-          <li>✅ מכונאות כללית, חשמל, מיזוג</li>
-          <li>✅ בדיקות תקינות וטסטים</li>
-          <li>✅ אבחון ותיקוני תקלות</li>
+        <ul className="list-unstyled mt-3">
+          <li>✔️ תיאום תור מקוון</li>
+          <li>✔️ דיאגנוסטיקה ממוחשבת</li>
+          <li>✔️ טיפול תקופתי ואחריות</li>
         </ul>
 
-        <div className="mt-3">
-          <strong>📍 דרך חברון 9 באר שבע</strong><br />
-          🕒 שעות פעילות: א'-ה' 07:30-16:30 | ו' 07:30-11:30
+        <hr />
+
+        <p className="mb-1">
+          <span className="badge bg-warning text-dark">שעות פעילות</span><br />
+          א׳-ה׳ 07:30–16:30 | יום ו׳ 07:30–11:30
+        </p>
+
+        <p>📍 באר שבע | ☎️ 08-6283123</p>
+
+        <div className="d-flex gap-2 mt-3">
+          <a href="https://waze.com/ul" target="_blank" className="btn btn-success w-50">
+            <i className="bi bi-signpost-2-fill me-1"></i> Waze
+          </a>
+          <a href="https://maps.google.com" target="_blank" className="btn btn-danger w-50">
+            <i className="bi bi-geo-alt-fill me-1"></i> Google Maps
+          </a>
         </div>
-
-        <div className="mt-4 d-grid gap-3">
-          <Link to="/register" className="btn btn-primary rounded-pill shadow">הרשמה ללקוחות חדשים</Link>
-          <Link to="/login" className="btn btn-success rounded-pill shadow">כניסה ללקוחות</Link>
-        </div>
-
-        <div className="mt-4 d-flex justify-content-between gap-2">
-          <a href="https://waze.com/ul?ll=31.252973,34.791462&navigate=yes" target="_blank" rel="noopener noreferrer"
-            className="btn btn-outline-info w-100 shadow">📍 ניווט ב-Waze</a>
-          <a href="https://maps.google.com/?q=דרך חברון 9 באר שבע" target="_blank" rel="noopener noreferrer"
-            className="btn btn-outline-danger w-100 shadow">🌍 Google Maps</a>
-        </div>
-
-        <form className="mt-4">
-          <h5 className="fw-bold">צור קשר</h5>
-          <input type="text" className="form-control mb-2" placeholder="שם" />
-          <input type="text" className="form-control mb-2" placeholder="טלפון" />
-          <button type="submit" className="btn btn-dark w-100 rounded-pill shadow">שלח</button>
-        </form>
-
       </div>
     </div>
   );

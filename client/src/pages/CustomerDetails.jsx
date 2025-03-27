@@ -1,24 +1,22 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-export default function CustomerMyDetails() {
+const CustomerDetails = () => {
   const [customer, setCustomer] = useState({});
   const [vehicles, setVehicles] = useState([]);
   const [message, setMessage] = useState('');
-  const handleAddVehicle = () => {
-    setVehicles([...vehicles, { model: '', plate: '' }]);
-  };
+
   useEffect(() => {
     axios.get('http://localhost:5000/customers/dashboard', { withCredentials: true })
       .then(res => {
         setCustomer(res.data.customer);
         setVehicles(res.data.vehicles);
       })
-      .catch(() => setMessage('שגיאה בטעינת פרטי הלקוח'));
+      .catch(() => setMessage('❌ שגיאה בטעינת הפרטים'));
   }, []);
 
-  const handleChange = (e) => {
-    setCustomer({ ...customer, [e.target.name]: e.target.value });
+  const handleInputChange = (field, value) => {
+    setCustomer({ ...customer, [field]: value });
   };
 
   const handleVehicleChange = (index, field, value) => {
@@ -27,13 +25,19 @@ export default function CustomerMyDetails() {
     setVehicles(updated);
   };
 
-
+  const handleAddVehicle = () => {
+    setVehicles([...vehicles, { model: '', plate: '' }]);
+  };
 
   const handleSave = async () => {
     try {
-      await axios.put('http://localhost:5000/customers/update', { phone: customer.phone, email: customer.email }, { withCredentials: true });
-  
-      // שליחת רכבים חדשים
+      // עדכון פרטי לקוח
+      await axios.put('http://localhost:5000/customers/update', {
+        phone: customer.phone,
+        email: customer.email
+      }, { withCredentials: true });
+
+      // שליחת רכבים חדשים בלבד
       for (let v of vehicles) {
         if (!v.id && v.model && v.plate) {
           await axios.post('http://localhost:5000/customers/add-vehicle', {
@@ -43,63 +47,61 @@ export default function CustomerMyDetails() {
           }, { withCredentials: true });
         }
       }
-  
+
       setMessage('✅ הפרטים נשמרו בהצלחה');
     } catch (err) {
+      console.error(err);
       setMessage('❌ שגיאה בשמירת הפרטים');
-    }
-  };
-  
-  const handleSave = async () => {
-    try {
-      await axios.post('http://localhost:5000/customers/update', {
-        ...customer,
-        vehicles
-      }, { withCredentials: true });
-      setMessage('הפרטים עודכנו בהצלחה!');
-    } catch {
-      setMessage('שגיאה בעדכון הפרטים');
     }
   };
 
   return (
-    <div className="home-container d-flex justify-content-center align-items-center text-center">
-      <div className="home-card shadow-lg p-4 text-center" style={{ maxWidth: '500px', width: '100%' }}>
-        <h4 className="fw-bold mb-4">הפרטים שלי</h4>
-        {message && <div className="alert alert-info">{message}</div>}
-  
-        <label className="form-label">שם</label>
-        <input className="form-control text-center mb-3" value={customer.name || ''} disabled />
-  
-        <label className="form-label">טלפון</label>
-        <input className="form-control text-center mb-3" name="phone" value={customer.phone || ''} onChange={handleChange} />
-  
-        <label className="form-label">מייל</label>
-        <input className="form-control text-center mb-3" name="email" value={customer.email || ''} onChange={handleChange} />
-  
-        <h5 className="mt-4">הרכבים שלי</h5>
-        {vehicles.map((v, i) => (
-          <div key={v.id} className="border rounded p-3 mb-3 bg-light">
-            <label className="form-label">דגם</label>
-            <input
-              className="form-control text-center mb-2"
-              value={v.model}
-              onChange={(e) => handleVehicleChange(i, 'model', e.target.value)}
-            />
-            <label className="form-label">מספר רישוי</label>
-            <input
-              className="form-control text-center"
-              value={v.plate}
-              onChange={(e) => handleVehicleChange(i, 'plate', e.target.value)}
-            />
+    <div className="home-container">
+      <div className="home-card shadow text-end">
+        <h3 className="fw-bold mb-4 text-center">הפרטים שלי</h3>
+
+        {message && <div className="alert alert-info text-center">{message}</div>}
+
+        <div className="mb-3">
+          <label className="form-label">שם</label>
+          <input className="form-control" value={customer.name || ''} disabled />
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label">טלפון</label>
+          <input className="form-control" value={customer.phone || ''} onChange={e => handleInputChange('phone', e.target.value)} />
+        </div>
+
+        <div className="mb-4">
+          <label className="form-label">מייל</label>
+          <input className="form-control" value={customer.email || ''} onChange={e => handleInputChange('email', e.target.value)} />
+        </div>
+
+        <h5 className="fw-bold mb-3">הרכבים שלי</h5>
+
+        {vehicles.map((v, index) => (
+          <div key={index} className="border rounded p-3 mb-3 bg-light">
+            <div className="mb-2">
+              <label className="form-label">דגם</label>
+              <input className="form-control" value={v.model} onChange={e => handleVehicleChange(index, 'model', e.target.value)} />
+            </div>
+            <div>
+              <label className="form-label">מספר רישוי</label>
+              <input className="form-control" value={v.plate} onChange={e => handleVehicleChange(index, 'plate', e.target.value)} />
+            </div>
           </div>
         ))}
-  <button className="btn btn-outline-primary w-100 mb-3" onClick={handleAddVehicle}>
-  הוסף רכב חדש
-</button>
-        <button className="btn btn-primary w-100 rounded-pill mt-3">שמירת שינויים</button>
+
+        <button className="btn btn-outline-primary w-100 mb-3" onClick={handleAddVehicle}>
+          ➕ הוסף רכב חדש
+        </button>
+
+        <button className="btn btn-success w-100 rounded-pill" onClick={handleSave}>
+          💾 שמור שינויים
+        </button>
       </div>
     </div>
   );
-  
-}
+};
+
+export default CustomerDetails;
