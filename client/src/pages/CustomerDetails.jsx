@@ -1,79 +1,105 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
 
-export default function CustomerDetails() {
+export default function CustomerMyDetails() {
   const [customer, setCustomer] = useState({});
   const [vehicles, setVehicles] = useState([]);
-  const [form, setForm] = useState({});
-  const navigate = useNavigate();
-
+  const [message, setMessage] = useState('');
+  const handleAddVehicle = () => {
+    setVehicles([...vehicles, { model: '', plate: '' }]);
+  };
   useEffect(() => {
     axios.get('http://localhost:5000/customers/dashboard', { withCredentials: true })
       .then(res => {
         setCustomer(res.data.customer);
         setVehicles(res.data.vehicles);
-        setForm({
-          phone: res.data.customer.phone,
-          email: res.data.customer.email,
-          vehicles: res.data.vehicles.map(v => ({ ...v }))
-        });
       })
-      .catch(() => navigate('/login'));
+      .catch(() => setMessage('שגיאה בטעינת פרטי הלקוח'));
   }, []);
 
-  const handleVehicleChange = (index, field, value) => {
-    const updatedVehicles = [...form.vehicles];
-    updatedVehicles[index][field] = value;
-    setForm({ ...form, vehicles: updatedVehicles });
+  const handleChange = (e) => {
+    setCustomer({ ...customer, [e.target.name]: e.target.value });
   };
+
+  const handleVehicleChange = (index, field, value) => {
+    const updated = [...vehicles];
+    updated[index][field] = value;
+    setVehicles(updated);
+  };
+
+
 
   const handleSave = async () => {
     try {
-      await axios.put(`http://localhost:5000/customers/update`, {
-        phone: form.phone,
-        email: form.email,
-        vehicles: form.vehicles
-      }, { withCredentials: true });
-      alert("הפרטים עודכנו בהצלחה!");
-      navigate('/dashboard');
+      await axios.put('http://localhost:5000/customers/update', { phone: customer.phone, email: customer.email }, { withCredentials: true });
+  
+      // שליחת רכבים חדשים
+      for (let v of vehicles) {
+        if (!v.id && v.model && v.plate) {
+          await axios.post('http://localhost:5000/customers/add-vehicle', {
+            customer_id: customer.id,
+            model: v.model,
+            plate: v.plate
+          }, { withCredentials: true });
+        }
+      }
+  
+      setMessage('✅ הפרטים נשמרו בהצלחה');
     } catch (err) {
-      alert("שגיאה בעדכון הפרטים");
+      setMessage('❌ שגיאה בשמירת הפרטים');
+    }
+  };
+  
+  const handleSave = async () => {
+    try {
+      await axios.post('http://localhost:5000/customers/update', {
+        ...customer,
+        vehicles
+      }, { withCredentials: true });
+      setMessage('הפרטים עודכנו בהצלחה!');
+    } catch {
+      setMessage('שגיאה בעדכון הפרטים');
     }
   };
 
   return (
-    <div className="home-container">
-      <div className="home-card shadow-lg text-end">
-        <h3 className="mb-4">הפרטים שלי</h3>
-
-        <div className="mb-3">
-          <label className="form-label">טלפון</label>
-          <input type="text" className="form-control" value={form.phone || ''} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
-        </div>
-
-        <div className="mb-3">
-          <label className="form-label">מייל</label>
-          <input type="email" className="form-control" value={form.email || ''} onChange={(e) => setForm({ ...form, email: e.target.value })} />
-        </div>
-
-        <h5 className="mt-4">הרכבים שלי:</h5>
-        {form.vehicles?.map((v, index) => (
-          <div key={v.id} className="border p-2 mb-3 rounded">
-            <div className="mb-2">
-              <label className="form-label">דגם</label>
-              <input type="text" className="form-control" value={v.model} onChange={(e) => handleVehicleChange(index, 'model', e.target.value)} />
-            </div>
-            <div className="mb-2">
-              <label className="form-label">מספר רישוי</label>
-              <input type="text" className="form-control" value={v.plate} onChange={(e) => handleVehicleChange(index, 'plate', e.target.value)} />
-            </div>
+    <div className="home-container d-flex justify-content-center align-items-center text-center">
+      <div className="home-card shadow-lg p-4 text-center" style={{ maxWidth: '500px', width: '100%' }}>
+        <h4 className="fw-bold mb-4">הפרטים שלי</h4>
+        {message && <div className="alert alert-info">{message}</div>}
+  
+        <label className="form-label">שם</label>
+        <input className="form-control text-center mb-3" value={customer.name || ''} disabled />
+  
+        <label className="form-label">טלפון</label>
+        <input className="form-control text-center mb-3" name="phone" value={customer.phone || ''} onChange={handleChange} />
+  
+        <label className="form-label">מייל</label>
+        <input className="form-control text-center mb-3" name="email" value={customer.email || ''} onChange={handleChange} />
+  
+        <h5 className="mt-4">הרכבים שלי</h5>
+        {vehicles.map((v, i) => (
+          <div key={v.id} className="border rounded p-3 mb-3 bg-light">
+            <label className="form-label">דגם</label>
+            <input
+              className="form-control text-center mb-2"
+              value={v.model}
+              onChange={(e) => handleVehicleChange(i, 'model', e.target.value)}
+            />
+            <label className="form-label">מספר רישוי</label>
+            <input
+              className="form-control text-center"
+              value={v.plate}
+              onChange={(e) => handleVehicleChange(i, 'plate', e.target.value)}
+            />
           </div>
         ))}
-
-        <button onClick={handleSave} className="btn btn-primary w-100 mt-3">שמור שינויים</button>
-        <button onClick={() => navigate('/dashboard')} className="btn btn-link w-100 mt-2">חזור לאיזור האישי</button>
+  <button className="btn btn-outline-primary w-100 mb-3" onClick={handleAddVehicle}>
+  הוסף רכב חדש
+</button>
+        <button className="btn btn-primary w-100 rounded-pill mt-3">שמירת שינויים</button>
       </div>
     </div>
   );
+  
 }

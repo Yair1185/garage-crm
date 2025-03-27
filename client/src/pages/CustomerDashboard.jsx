@@ -1,91 +1,100 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { cancelAppointment } from '../api/appointments';
-import Card from 'react-bootstrap/Card';
-import Button from 'react-bootstrap/Button';
+import { useNavigate } from 'react-router-dom';
 
-export default function CustomerDashboard() {
-  const [customer, setCustomer] = useState({});
-  const [appointments, setAppointments] = useState([]);
+const CustomerDashboard = () => {
+  const [customer, setCustomer] = useState(null);
+  const [appointment, setAppointment] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     axios.get('http://localhost:5000/customers/dashboard', { withCredentials: true })
-      .then(res => {
+      .then((res) => {
         setCustomer(res.data.customer);
-        setAppointments(res.data.appointments);
+        const future = res.data.appointments.find(a => new Date(a.appointment_date) >= new Date());
+        setAppointment(future);
       })
-      .catch(() => navigate('/login'));
+      .catch(() => {
+        navigate('/login');
+      });
   }, []);
 
-  const handleCancel = (id) => {
-    if (window.confirm('האם אתה בטוח שברצונך לבטל את התור?')) {
-      cancelAppointment(id).then(() => {
-        setAppointments([]);
-      });
-    }
+  const handleLogout = () => {
+    axios.get('http://localhost:5000/customers/logout', { withCredentials: true }).then(() => {
+      navigate('/');
+    });
   };
 
-  const handleEdit = (appointment) => {
-    // נעביר את הנתונים דרך הניווט
+  const handleEdit = () => {
     navigate('/new-appointment', { state: { appointment } });
   };
 
-  const hour = new Date().getHours();
-  const greeting = hour < 12 ? 'בוקר טוב' : hour < 18 ? 'צהריים טובים' : 'ערב טוב';
-  const hasAppointment = appointments.length > 0;
+  const handleCancel = () => {
+    axios.delete(`http://localhost:5000/appointments/${appointment.id}`, { withCredentials: true })
+      .then(() => {
+        setAppointment(null);
+      });
+  };
+
+  const formatDate = (iso) => new Date(iso).toLocaleDateString('he-IL');
+  const formatTime = (time) => time.slice(0, 5); // HH:mm
 
   return (
-    <div className="home-container">
-      <div className="home-card shadow-lg text-end">
-        <h3>{greeting}, {customer.name}</h3>
+    <div className="home-container text-center">
+      <div className="home-card shadow-lg p-4">
 
-        <div className="d-grid gap-2 mt-3">
-          <Button variant="outline-primary" onClick={() => navigate('/my-details')}>הפרטים שלי</Button>
-          {!hasAppointment && (
-            <Button variant="outline-success" onClick={() => navigate('/new-appointment')}>
-              קבע תור חדש
-            </Button>
-            
-          
-          )}
-          <Button variant="outline-primary" onClick={() => navigate('/profile')}>
-  הפרטים שלי
-</Button>
+        <h4 className="fw-bold mb-3">
+          {greeting()} {customer?.name || 'לקוח'}
+        </h4>
 
-          <Button variant="outline-secondary" onClick={() => navigate('/my-appointments')}>
+        <button className="btn btn-outline-danger mb-3 rounded-pill w-100" onClick={handleLogout}>
+          התנתק
+        </button>
+
+        <div className="mb-3">
+          <button
+            className="btn btn-outline-primary w-100 mb-2 rounded-pill"
+            onClick={() => navigate('/my-details')}
+          >
+            הפרטים שלי
+          </button>
+
+          <button
+            className="btn btn-outline-secondary w-100 rounded-pill"
+            onClick={() => navigate('/previous-appointments')}
+          >
             תורים קודמים
-          </Button>
+          </button>
         </div>
 
-        <h4 className="mt-4">התורים שלי:</h4>
+        <hr />
 
-        {appointments.length === 0 ? (
-          <p>אין תורים פעילים כרגע</p>
+        <h5 className="fw-bold">התורים שלי:</h5>
+        {!appointment ? (
+          <div className="alert alert-info mt-3">לא קיים תור מתואם</div>
         ) : (
-          appointments.map((a) => (
-            <Card key={a.id} className="mt-3 text-end">
-              <Card.Body>
-                <Card.Title>תור מתואם</Card.Title>
-                <Card.Text>
-                  <strong>תאריך:</strong> {a.appointment_date}<br />
-                  <strong>שעה:</strong> {a.appointment_time}<br />
-                  <strong>שירות:</strong> {a.service_type}
-                </Card.Text>
-                <div className="d-flex gap-2">
-                  <Button variant="danger" onClick={() => handleCancel(a.id)}>בטל תור</Button>
-                  <Button variant="success" onClick={() => handleEdit(a)}>שינוי תור</Button>
-                  <Button variant="outline-secondary" onClick={() => navigate('/my-appointments')}>
-  תורים קודמים
-</Button>
+          <div className="card bg-light p-3 mt-3">
+            <p className="fw-bold mb-1 text-success">תור מתואם</p>
+            <p className="mb-1"><strong>תאריך:</strong> {formatDate(appointment.appointment_date)}</p>
+            <p className="mb-1"><strong>שעה:</strong> {formatTime(appointment.appointment_time)}</p>
+            <p className="mb-3"><strong>שירות:</strong> {appointment.service_type}</p>
 
-                </div>
-              </Card.Body>
-            </Card>
-          ))
+            <div className="d-flex gap-2 justify-content-center">
+              <button className="btn btn-danger rounded-pill" onClick={handleCancel}>בטל תור</button>
+              <button className="btn btn-success rounded-pill" onClick={handleEdit}>שינוי תור</button>
+            </div>
+          </div>
         )}
       </div>
     </div>
   );
+};
+
+function greeting() {
+  const hour = new Date().getHours();
+  if (hour < 12) return 'בוקר טוב,';
+  if (hour < 18) return 'צהריים טובים,';
+  return 'ערב טוב,';
 }
+
+export default CustomerDashboard;
