@@ -8,22 +8,34 @@ export default function HomePage() {
   const navigate = useNavigate();
 
   return (
-    <div className="container position-relative mt-4">
-  {/* כפתורים עליונים */}
-  <div className="position-absolute top-0 end-0 p-3 d-flex header-buttons">
+    <div className="container mt-4">
+  {/* כפתורים עליונים בשורה בפני עצמם */}
+  <div className="d-flex justify-content-end gap-3 mb-4">
+  <div className="text-center">
     <Button variant="outline-dark" className="icon-btn" onClick={() => navigate('/register')} title="הרשמה">
       <i className="bi bi-person-plus"></i>
     </Button>
-    <Button variant="outline-dark" className="icon-btn" onClick={() => navigate('/admin-login')} title="כניסת צוות">
+    <div className="icon-label">הרשמה</div>
+  </div>
+
+  <div className="text-center">
+    <Button variant="outline-dark" className="icon-btn" onClick={() => navigate('/admin-login')} title="צוות">
       <i className="bi bi-person-badge"></i>
     </Button>
+    <div className="icon-label">צוות</div>
+  </div>
+
+  <div className="text-center">
     <Button variant="outline-dark" className="icon-btn" onClick={() => navigate('/login')} title="אזור אישי">
       <i className="bi bi-person-circle"></i>
     </Button>
+    <div className="icon-label">אזור אישי</div>
   </div>
+</div>
+
 
       {/* כרטיס מרכזי */}
-      <div className="home-card mx-auto shadow-lg text-end p-4 bg-white mt-5">
+      <div className="home-card mx-auto shadow-lg text-end p-4 bg-white">
         <h2 className="fw-bold mb-2">ברוכים הבאים 🚗</h2>
         <p className="text-muted">שירות מקצועי, אמין ומסור לרכב שלך<br />כבר מעל 8 שנים!</p>
 
