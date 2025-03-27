@@ -3,7 +3,7 @@ const router = express.Router();
 const pool = require('../db');
 
 // ✅ יצירת תור
-router.post('/', async (req, res) => {
+router.post('/',isCustomer, async (req, res) => {
   const { vehicle_id, appointment_date, appointment_time, service_type } = req.body;
   const customerId = req.session.customerId;
 
@@ -75,7 +75,7 @@ router.get('/past', async (req, res) => {
 
 
 // ✅ שליפת תורים של הלקוח
-router.get('/my', async (req, res) => {
+router.get('/my',isCustomer, async (req, res) => {
   const customerId = req.session.customerId;
   if (!customerId) return res.status(401).json({ error: 'Unauthorized' });
 

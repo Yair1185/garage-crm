@@ -1,227 +1,115 @@
-You said:
-אני שולח לך את קובץ README של הפרוייקט
-# 🚗 Garage CRM - מערכת ניהול מוסך (גרסה 2025)
-
-ניהול לקוחות, רכבים, תורים, וימים חסומים עבור מוסך.
-
-## 📂 מבנה פרויקט
-📦 root/
-│── .env
-│── Dockerfile
-│── docker-compose.yml
-│── README.md
-│── src/ - Node.js Express Backend
-│ ├── server.js
-│ ├── routes/
-│ ├── db/index.js (PostgreSQL)
-│ ├── migration.sql
-│ ├── seedPostgres.js
-│── client/ - React Vite Frontend
-│ ├── src/
-│ │ ├── index.jsx
-│ │ ├── App.jsx
-│ │ ├── pages/ (RegisterPage, LoginPage, CustomerDashboard...)
-│ │ ├── api/ (axios endpoints)
-│ │ ├── components/
-│── package.json
-│── client/package.json
-
-markdown
-Copy
-Edit
-
-## 🛠 טכנולוגיות
-- PostgreSQL 17
-- Node.js / Express
-- React.js / Vite / React Router
-- Bootstrap 5
-- Docker / Docker Compose
-- dotenv
-- Jest / Supertest
-
-## 🚀 הפעלת הפרויקט
-
-### ✅ שרת API
-bash
-cd ./garage-crm
-npm install
-npm run dev
-http://localhost:5000
-
-✅ קליינט React
-bash
-Copy
-Edit
-cd ./garage-crm/client
-npm install
-npm run dev
-http://localhost:5173
-
-✅ PostgreSQL (קונפיגורציה)
-קובץ .env
-
-bash
-Copy
-Edit
-DATABASE_URL=postgresql://postgres:1185@localhost:5432/garage_crm
-pg_hba.conf: trust
-
-פקודת התחברות:
-
-bash
-Copy
-Edit
-psql -h localhost -U postgres -d garage_crm
-📌 Endpoints עיקריים
-Route	Method	Description
-/customers/register	POST	רישום לקוח חדש
-/customers/login	POST	התחברות לקוח
-/customers/dashboard	GET	דאשבורד לקוח
-/customers/add-vehicle	POST	הוספת רכב ללקוח
-/appointments	GET/POST	ניהול תורים
-/blockedDays	GET/POST/DELETE	ימים חסומים
-🗒️ משימות להמשך הפרויקט (Roadmap):
-✅ 1. ✅ עיצוב דף הבית - מודרני, רספונסיבי, עם אנימציות.
-✅ 2. התאמת מערכת הרשאות - לקוחות / מנהלים.
-✅ 3. אבטחת API עם JWT / Session + CORS מוגבל.
-✅ 4. יצוא לקובץ PDF של התורים / היסטוריית רכבים.
-✅ 5. טסטים נוספים לכל ה-API.
-✅ 6. פריסה מלאה עם Docker Compose.
-✅ 7. תמיכה במשתמשים מרובים בו זמנית (WebSocket/Socket.io).
-הוא כבר לא מעודכן 
-תשפר אותו כולל הסברים מפורטים על הפרוייקט
-לפחות 200 מילים 
-כולל מבנה הפרוייקט
-תזרים 
-כל מה שאתה יכול לחשוב עליובשביל שאני אוכל להביא את הקובץ למישהו והוא ידע בדיוק מה צריך לעשות בשביל להביא אותו לכדי סיום
-
-
-
-2/2
-
-ChatGPT said:
-מעולה יאיר! 👏
-הנה גרסה משופרת של קובץ README.md שתעשה רושם מקצועי 🔥 ותעזור לכל מפתח להיכנס לפרויקט בקלות:
-
-md
-Copy
-Edit
 # 🚗 Garage CRM – מערכת ניהול מוסך | גרסה 2025
 
-**Garage CRM** היא מערכת ניהול מותאמת אישית עבור מוסכים, המיועדת לתיאום תורים, ניהול לקוחות ורכבים, ניהול ימי עבודה ותחזוקת מאגר נתונים מקצועי.  
-הפרויקט בנוי בטכנולוגיות מודרניות ומופרד ל־Backend ו־Frontend בצורה מלאה, כולל תמיכה ב־Sessions, מסדי נתונים מתקדמים, והתאמה רספונסיבית למובייל.
+**Garage CRM** היא מערכת ניהול חכמה ומודרנית למוסכים, הכוללת ניהול לקוחות, תיאום תורים, רישום רכבים, הגבלת ימים ושעות, והרשאות גישה למנהלים.  
+המערכת מותאמת לעבודה בסביבה עברית מלאה, כוללת ממשק משתמש אינטואיטיבי ומודולריות בין לקוחות לצוות הניהול.
 
 ---
 
 ## 🧠 תיאור כללי
 
-מערכת ניהול המוסך מאפשרת ללקוחות להירשם, להוסיף רכב, לתאם תור בהתאם לתקנות (ימי עבודה, זמני טיפול, חסימות וכו’), לנהל תורים קיימים, לצפות בהיסטוריית הטיפולים ולערוך את פרטיהם האישיים.
-
-במקביל, מנהל המוסך מקבל מערכת ניהול ייעודית עם גישה לכל התורים, חסימות יומנים, וניהול כולל.
+המערכת מבוססת על חלוקה ל־Frontend ו־Backend, עם מסד נתונים PostgreSQL ואבטחת Session לכל משתמש.  
+לקוחות יכולים להירשם, להתחבר, לתאם תור (על פי חוקים מוגדרים), ולצפות בתורים קודמים.  
+מנהלים יכולים להתחבר, לנהל את כל המידע, לחסום תאריכים, להוסיף מנהלים חדשים, ולצפות בדוחות עומסים.
 
 ---
 
-## 🗂️ מבנה הפרויקט
+## 📁 מבנה הפרויקט
 
-📦 garage-crm/ ├── .env # משתני סביבה (DATABASE_URL) ├── Dockerfile / docker-compose # להרצה מהירה עם Docker ├── README.md # קובץ זה │ ├── src/ # Backend (Node.js / Express) │ ├── server.js # נקודת כניסה לשרת │ ├── app.js # הגדרות האפליקציה (CORS, Session וכו’) │ ├── db/index.js # חיבור למסד PostgreSQL │ ├── migration.sql # יצירת טבלאות במסד │ ├── seedPostgres.js # נתוני דמה (אופציונלי) │ └── routes/ # קובצי ניתוב │ ├── customers.js # לקוחות │ ├── appointments.js # תורים │ ├── blockedDays.js # ימי חסימה │ ├── manager.js # ניהול │ ├── client/ # Frontend (React + Vite) │ └── src/ │ ├── App.jsx # ראוטים ראשיים │ ├── api/ # תקשורת מול ה-API │ ├── pages/ # דפים: התחברות, הרשמה, לוח מחוונים, תיאום תורים │ ├── components/ # קומפוננטות עיצוב ואבטחה │ └── styles/ # קובצי CSS
+```bash
+📦 garage-crm/
+├── .env                     # משתני סביבה
+├── docker-compose.yml      # קונפיגורציית Docker (אופציונלית)
+├── src/                    # Backend (Node.js)
+│   ├── server.js           # הרצת השרת
+│   ├── app.js              # קונפיגורציה ראשית
+│   ├── routes/             # קבצי ניתוב: customers, manager, appointments
+│   ├── db/                 # חיבור למסד
+│   └── migration.sql       # יצירת טבלאות
+├── client/                 # Frontend (React)
+│   └── src/
+│       ├── pages/          # עמודים: הרשמה, כניסה, דשבורד, ניהול תורים
+│       ├── api/            # תקשורת עם ה־API
+│       └── components/     # קומפוננטות חוזרות
+🔄 תזרים מערכת
+✍️ רישום לקוח עם רכב
 
-markdown
+🔐 התחברות לפי טלפון ולוחית רישוי
+
+📋 תיאום תור לפי חוקיות:
+
+אי אפשר לתאם בשבת
+
+שעות פעילות מ־07:30 עד 14:00
+
+סוג שירות קובע אורך התור
+
+יום עם 8 תורים ➝ נחסם
+
+🛠️ שינוי או ביטול תור (עד 24 שעות מראש)
+
+🕒 תורים קודמים
+
+👤 עדכון פרטים אישיים ורכבים
+
+🧑‍💼 התחברות מנהל + דשבורד עם סטטיסטיקות
+
+📊 גרף עומסים + ניהול ימים חסומים + הוספת מנהלים
+
+💻 טכנולוגיות
+Backend: Node.js, Express
+
+Frontend: React, Vite, Bootstrap
+
+DB: PostgreSQL
+
+Session: express-session
+
+אבטחה: bcrypt
+
+גרפים: Chart.js
+
+Dev Tools: Docker, dotenv, nodemon
+
+🚀 הפעלה
+bash
 Copy
 Edit
-
----
-
-## 🔄 תזרים משתמש
-
-1. **רישום לקוח חדש** → `/register`
-2. **התחברות לפי טלפון ולוחית רישוי**
-3. **דשבורד אישי** עם שם לקוח וברכת זמן (בוקר/צהריים/ערב טוב)
-4. **תיאום תור** – רק אם אין תור פעיל:
-   - בחירת רכב, תאריך, שעה, סוג טיפול
-   - הגבלות: ימי שבת, ימים חסומים, עומס יומי, שעות פעילות
-5. **שינוי או ביטול תור** (עד 24 שעות לפני)
-6. **צפייה בהיסטוריית תורים**
-7. **ניהול רכבים / עדכון פרטים אישיים**
-8. **יציאה מהמערכת**
-
----
-
-## 🛠 טכנולוגיות
-
-- **Backend**: Node.js, Express.js, PostgreSQL
-- **Frontend**: React.js, Vite, Bootstrap 5
-- **אבטחה**: express-session, CORS
-- **Dev Tools**: Docker, dotenv, nodemon
-- **בדיקות**: Jest, Supertest (בהמשך)
-- **שפה**: עברית מלאה בכל ממשקי ה־UI
-
----
-
-## 🚀 איך מפעילים?
-
-### ✅ שרת API
-```bash
+# Back
 cd garage-crm
 npm install
 npm run dev
-נגיש ב־http://localhost:5000
 
-✅ לקוח (React)
-bash
-Copy
-Edit
-cd garage-crm/client
+# Front
+cd client
 npm install
 npm run dev
-נגיש ב־http://localhost:5173
-
-🗃️ הגדרות מסד PostgreSQL
-קובץ .env:
-
-bash
-Copy
-Edit
-DATABASE_URL=postgresql://postgres:<password>@localhost:5432/garage_crm
-הפעלת מסד:
-
-bash
-Copy
-Edit
-psql -U postgres -d garage_crm -f src/migration.sql
-🔌 Endpoints עיקריים
+📌 API עיקריים
 Route	Method	תיאור
 /customers/register	POST	רישום לקוח חדש
-/customers/login	POST	התחברות לקוח
-/customers/dashboard	GET	מידע אישי, רכבים, תורים
-/customers/add-vehicle	POST	הוספת רכב חדש
-/appointments	GET/POST/DELETE	ניהול תורים
+/customers/login	POST	התחברות לפי טלפון ורכב
+/customers/dashboard	GET	מידע אישי + תורים + רכבים
+/appointments	POST	תיאום תור
+/appointments/:id	DELETE	ביטול תור
 /appointments/past	GET	שליפת תורים קודמים
-/blockedDays	GET/POST/DELETE	ימי חסימה
-/manager	GET/POST (בעתיד)	פעולות מנהל
-🗺️ Roadmap: המשך פיתוח
-✅ UI רספונסיבי ונגיש
+/manager/login	POST	התחברות מנהל
+/manager/dashboard	GET	דשבורד מנהל
+/manager/add-admin	POST	יצירת מנהל נוסף
+/manager/appointments-per-day	GET	גרף עומסים
+/blockedDays	CRUD	ניהול ימי חסימה
+🔮 Roadmap
+✅ ניהול הרשאות מלא
 
-✅ ניהול תורים לפי כללים עסקיים (סוג שירות, עומסים, שעות)
+✅ תורים לפי עומסים
 
-✅ התממשקות עם session (כולל הגנה על דשבורד)
+✅ תמיכה במנהלים מרובים
 
-⬜ שליחת מייל/SMS עם אישור תור
+✅ אבטחת סיסמאות עם bcrypt
 
-⬜ יצירת מסך ניהול מלא למנהל
+⬜ הודעות מייל/SMS
 
-⬜ תמיכה ב־JWT במקום session
+⬜ JWT במקום session
 
-⬜ Docker Compose לפריסה
+⬜ בדיקות אוטומטיות
 
-⬜ טסטים אוטומטיים לכל ה־API
-
-🤝 תרומה ותחזוקה
-אם ברצונך לעזור בפרויקט, תוכל:
-
-לשפר את ה־UI
-
-להוסיף טסטים
-
-לעצב עמוד ניהול מלא
-
-לחבר למערכת תשלומים בעתיד
+במילים פשוטות?
+זה לא רק CRM, זה חלום לכל מוסכניק 😄

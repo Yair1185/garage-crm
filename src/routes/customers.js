@@ -2,7 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../db');
-
+const isCustomer = require('../middleware/isCustomer');
 // ✅ רישום לקוח חדש
 router.post('/register', async (req, res) => {
   const { name, phone, email, model, plate } = req.body;
@@ -65,7 +65,7 @@ router.post('/login', async (req, res) => {
 
 
 // ✅ Dashboard לקוח
-router.get('/dashboard', async (req, res) => {
+router.get('/dashboard',isCustomer, async (req, res) => {
   if (!req.session.customerId) return res.status(401).json({ error: 'Unauthorized' });
 
   try {
@@ -120,7 +120,7 @@ router.put('/update-profile', async (req, res) => {
 
 
 // ✅ עדכון פרטי לקוח ורכב
-router.put('/update', async (req, res) => {
+router.put('/update',isCustomer, async (req, res) => {
   const customerId = req.session.customerId;
   const { phone, email, vehicles } = req.body;
 
@@ -161,7 +161,7 @@ router.post('/add-vehicle', async (req, res) => {
 });
 
 // ✅ התנתקות
-router.get('/logout', (req, res) => {
+router.get('/logout',isCustomer, (req, res) => {
   req.session.destroy();
   res.status(200).json({ message: 'Logged out successfully' });
 });
