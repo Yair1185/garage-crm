@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../db');
 const bcrypt = require('bcrypt');
-
+const isAdmin = require('../middleware/isAdmin');
 // ✅ התחברות מנהל
 router.post('/login', async (req, res) => {
   const { username, password } = req.body;
@@ -25,7 +25,7 @@ router.post('/login', async (req, res) => {
 });
 
 // ✅ גרף: תורים עתידיים לפי יום
-router.get('/appointments-per-day', async (req, res) => {
+router.get('/appointments-per-day',isAdmin, async (req, res) => {
   try {
     const result = await pool.query(`
       SELECT appointment_date AS date, COUNT(*) AS count
@@ -55,13 +55,17 @@ router.post('/login', async (req, res) => {
     const result = await pool.query('SELECT * FROM admin WHERE username = $1', [username]);
     const admin = result.rows[0];
 
-    if (!admin || admin.password !== password) {
+    if (!admin) {
       return res.status(401).json({ error: 'שם משתמש או סיסמה שגויים' });
     }
 
-    // שמירת מזהה המנהל ב-session
-    req.session.admin = { id: admin.id, username: admin.username };
+    const match = await bcrypt.compare(password, admin.password);
 
+    if (!match) {
+      return res.status(401).json({ error: 'שם משתמש או סיסמה שגויים' });
+    }
+
+    req.session.admin = { id: admin.id, username: admin.username };
     res.status(200).json({ message: 'ברוך הבא, מנהל!' });
   } catch (err) {
     console.error('❌ שגיאה בהתחברות מנהל:', err);
@@ -79,7 +83,7 @@ router.use((req, res, next) => {
 });
 
 // ✅ יצירת מנהל חדש
-router.post('/add-admin', async (req, res) => {
+router.post('/add-admin',isAdmin, async (req, res) => {
   const { username, password } = req.body;
 
   if (!username || !password) {
@@ -87,16 +91,16 @@ router.post('/add-admin', async (req, res) => {
   }
 
   try {
-    // האם המשתמש כבר קיים?
     const existing = await pool.query('SELECT * FROM admin WHERE username = $1', [username]);
     if (existing.rows.length > 0) {
       return res.status(409).json({ error: 'שם המשתמש כבר קיים' });
     }
 
-    // יצירת מנהל חדש
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     await pool.query(
       'INSERT INTO admin (username, password) VALUES ($1, $2)',
-      [username, password]
+      [username, hashedPassword]
     );
 
     res.status(201).json({ message: 'המנהל נוצר בהצלחה' });
@@ -106,9 +110,8 @@ router.post('/add-admin', async (req, res) => {
   }
 });
 
-
 // ✅ Dashboard נתונים
-router.get('/dashboard', async (req, res) => {
+router.get('/dashboard', isAdmin,async (req, res) => {
   try {
     const customers = await pool.query('SELECT COUNT(*) FROM customers');
     const vehicles = await pool.query('SELECT COUNT(*) FROM vehicles');
