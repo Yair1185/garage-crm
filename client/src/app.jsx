@@ -44,13 +44,13 @@ const App = () => {
         <Route path="/admin-login" element={<AdminLoginPage />} />
         
         <Route
-          path="/admin"
-          element={
-            <ProtectedRoute isAuthenticated={isAuthenticated}>
-              <AdminDashboard />
-            </ProtectedRoute>
-          }
-        />
+  path="/admin"
+  element={
+    <ProtectedRoute isAuthenticated={isAuthenticated} role="admin">
+      <AdminDashboard />
+    </ProtectedRoute>
+  }
+/>
         <Route
   path="/my-appointments"
   element={

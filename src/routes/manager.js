@@ -4,25 +4,7 @@ const router = express.Router();
 const pool = require('../db');
 const bcrypt = require('bcrypt');
 const isAdmin = require('../middleware/isAdmin');
-// ✅ התחברות מנהל
-router.post('/login', async (req, res) => {
-  const { username, password } = req.body;
-  if (!username || !password) return res.status(400).json({ error: 'Username and password are required' });
 
-  try {
-    const result = await pool.query('SELECT * FROM admin WHERE username = $1', [username]);
-    const admin = result.rows[0];
-    if (!admin || !bcrypt.compareSync(password, admin.password)) {
-      return res.status(401).json({ error: 'Invalid credentials' });
-    }
-
-    req.session.managerId = admin.id;
-    res.status(200).json({ message: 'Login successful' });
-  } catch (err) {
-    console.error('❌ Manager login error:', err);
-    res.status(500).json({ error: 'Login failed' });
-  }
-});
 
 // ✅ גרף: תורים עתידיים לפי יום
 router.get('/appointments-per-day',isAdmin, async (req, res) => {
@@ -66,6 +48,7 @@ router.post('/login', async (req, res) => {
     }
 
     req.session.admin = { id: admin.id, username: admin.username };
+    console.log("✅ התחברות מנהל הצליחה", req.session.admin); // הוספה לבדיקה
     res.status(200).json({ message: 'ברוך הבא, מנהל!' });
   } catch (err) {
     console.error('❌ שגיאה בהתחברות מנהל:', err);
@@ -73,14 +56,6 @@ router.post('/login', async (req, res) => {
   }
 });
 
-
-// ✅ Middleware הגנה לכל המסלולים למעט login ו logout
-router.use((req, res, next) => {
-  if (!req.session.managerId && req.path !== '/login' && req.path !== '/logout') {
-    return res.status(401).json({ error: 'Unauthorized' });
-  }
-  next();
-});
 
 // ✅ יצירת מנהל חדש
 router.post('/add-admin',isAdmin, async (req, res) => {
@@ -112,6 +87,7 @@ router.post('/add-admin',isAdmin, async (req, res) => {
 
 // ✅ Dashboard נתונים
 router.get('/dashboard', isAdmin,async (req, res) => {
+  console.log("📦 req.session:", req.session); // נראה מה באמת נשלח
   try {
     const customers = await pool.query('SELECT COUNT(*) FROM customers');
     const vehicles = await pool.query('SELECT COUNT(*) FROM vehicles');
@@ -119,7 +95,7 @@ router.get('/dashboard', isAdmin,async (req, res) => {
     const commonService = await pool.query(`
       SELECT service, COUNT(service) AS count 
       FROM appointments 
-      GROUP BY service 
+      GROUP BY service_type  
       ORDER BY count DESC 
       LIMIT 1
     `);
@@ -129,7 +105,7 @@ router.get('/dashboard', isAdmin,async (req, res) => {
         totalCustomers: Number(customers.rows[0].count),
         totalVehicles: Number(vehicles.rows[0].count),
         totalAppointments: Number(appointments.rows[0].count),
-        mostCommonService: commonService.rows[0]?.service || 'N/A'
+        mostCommonService: commonService.rows[0]?.service_type || 'N/A'
       }
     });
   } catch (err) {

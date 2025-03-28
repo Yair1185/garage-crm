@@ -2,36 +2,38 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-const AdminLoginPage = () => {
-  const navigate = useNavigate();
+export default function AdminLoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-
+  const navigate = useNavigate();
+  const [success, setSuccess] = useState('');
   const handleLogin = async (e) => {
     e.preventDefault();
-
     try {
-      await axios.post(
-        'http://localhost:5000/manager/login',
-        { username, password },
-        { withCredentials: true }
-      );
-      navigate('/admin');
+      await axios.post('http://localhost:5000/manager/login', {
+        username,
+        password,
+      }, { withCredentials: true });
+      
+      setSuccess('התחברת בהצלחה!');
+      setTimeout(() => {
+        window.location.href = '/admin'; // ⬅ רענון מלא ישמור את הסשן
+      }, 500);
     } catch (err) {
-      setError(err.response?.data?.error || 'שגיאה כללית בהתחברות');
+      setError('שם משתמש או סיסמה לא נכונים');
     }
   };
 
   return (
-    <div className="container mt-5 text-end">
-      <h2 className="mb-4">התחברות מנהל</h2>
-
+    <div className="container mt-5 text-end" style={{ maxWidth: '400px' }}>
+      <h2 className="mb-4">כניסת מנהל</h2>
       {error && <div className="alert alert-danger">{error}</div>}
+      {success && <div className="alert alert-success">{success}</div>}
 
       <form onSubmit={handleLogin}>
         <div className="mb-3">
-          <label>שם משתמש</label>
+          <label className="form-label">שם משתמש</label>
           <input
             type="text"
             className="form-control"
@@ -42,7 +44,7 @@ const AdminLoginPage = () => {
         </div>
 
         <div className="mb-3">
-          <label>סיסמה</label>
+          <label className="form-label">סיסמה</label>
           <input
             type="password"
             className="form-control"
@@ -52,12 +54,10 @@ const AdminLoginPage = () => {
           />
         </div>
 
-        <button type="submit" className="btn btn-success w-100">
+        <button type="submit" className="btn btn-dark w-100">
           התחבר
         </button>
       </form>
     </div>
   );
-};
-
-export default AdminLoginPage;
+}

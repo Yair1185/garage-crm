@@ -9,18 +9,22 @@ const db = require('./db'); // מעכשיו PostgreSQL
 
 const blockedRoutes = require('./routes/blockedDays');
 const app = express();
-app.use(express.json());
 
-// 📌 Middleware
-app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 app.use(session({
   secret: process.env.SESSION_SECRET || "supersecret",
   resave: false,
   saveUninitialized: false,
-  cookie: { secure: false,httpOnly: true  }
+  cookie: {
+    secure: false,           // false כי אתה לא על HTTPS (אם היית על HTTPS – true)
+    httpOnly: true,
+    sameSite: 'lax'          // ✅ קריטי במצב שאתה עליו (cross-origin)
+  }
 }));
+// 📌 Middleware
+app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 
 
+app.use(express.json());
 app.use('/blockedDays', blockedRoutes);
 
 // 📌 Routes
