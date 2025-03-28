@@ -4,7 +4,7 @@ const session = require('express-session');
 const cors = require('cors');
 const customerRoutes = require('./routes/customers');
 const appointmentRoutes = require('./routes/appointments');
-const managerRoutes = require('./routes/manager');
+const adminRoutes = require('./routes/admin');
 const db = require('./db'); // מעכשיו PostgreSQL
 
 const blockedRoutes = require('./routes/blockedDays');
@@ -30,7 +30,7 @@ app.use('/blockedDays', blockedRoutes);
 // 📌 Routes
 app.use('/customers', customerRoutes);
 app.use('/appointments', appointmentRoutes);
-app.use('/manager', managerRoutes);
+app.use('/admin', adminRoutes);
 
 // 📌 ברירת מחדל - מסלול לא קיים
 app.use((req, res) => {

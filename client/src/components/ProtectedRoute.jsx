@@ -9,3 +9,4 @@ const ProtectedRoute = ({ isAuthenticated, children, role = 'customer' }) => {
 };
 
 export default ProtectedRoute;
+  

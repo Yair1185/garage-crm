@@ -1,4 +1,4 @@
-// ✅ src/routes/manager.js - PostgreSQL Version
+// ✅ src/routes/admin.js - PostgreSQL Version
 const express = require('express');
 const router = express.Router();
 const pool = require('../db');
@@ -109,7 +109,7 @@ router.get('/dashboard', isAdmin,async (req, res) => {
       }
     });
   } catch (err) {
-    console.error('❌ Error fetching manager dashboard:', err);
+    console.error('❌ Error fetching admin dashboard:', err);
     res.status(500).json({ error: 'Failed to fetch dashboard data' });
   }
 });
