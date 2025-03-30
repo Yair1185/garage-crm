@@ -120,4 +120,13 @@ router.get('/logout', (req, res) => {
   res.status(200).json({ message: 'Logged out successfully' });
 });
 
+// ✅ src/routes/admin.js
+router.get('/check-auth', (req, res) => {
+  if (req.session && req.session.admin) {
+    res.status(200).json({ authenticated: true });
+  } else {
+    res.status(401).json({ authenticated: false });
+  }
+});
+
 module.exports = router;

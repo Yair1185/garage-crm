@@ -12,12 +12,18 @@ import ProtectedRoute from './components/ProtectedRoute';
 import AdminLoginPage from './pages/admin/AdminLoginPage';
 import CustomerNewAppointment from './pages/CustomerNewAppointment';
 import CustomerDetails from './pages/CustomerDetails';
-const isAuthenticated = true;
+import useAdminAuth from './hooks/useAdminAuth';
 import CustomerPastAppointments from './pages/CustomerPastAppointments';
 import AddAdminPage from './pages/admin/AddAdminPage';
 import CustomerProfile from './pages/CustomerProfile';
 
 const App = () => {
+
+  const isAuthenticated = useAdminAuth();
+  if (isAuthenticated === null) {
+    return <div className="text-center mt-5">🔐 טוען הרשאות...</div>;
+  }
+
   return (
     <div className="container mt-4">
       <Routes>
