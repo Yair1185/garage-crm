@@ -22,7 +22,7 @@
 ├── src/                    # Backend (Node.js)
 │   ├── server.js           # הרצת השרת
 │   ├── app.js              # קונפיגורציה ראשית
-│   ├── routes/             # קבצי ניתוב: customers, manager, appointments
+│   ├── routes/             # קבצי ניתוב: customers, admin, appointments
 │   ├── db/                 # חיבור למסד
 │   └── migration.sql       # יצירת טבלאות
 ├── client/                 # Frontend (React)
@@ -91,10 +91,10 @@ Route	Method	תיאור
 /appointments	POST	תיאום תור
 /appointments/:id	DELETE	ביטול תור
 /appointments/past	GET	שליפת תורים קודמים
-/manager/login	POST	התחברות מנהל
-/manager/dashboard	GET	דשבורד מנהל
-/manager/add-admin	POST	יצירת מנהל נוסף
-/manager/appointments-per-day	GET	גרף עומסים
+/admin/login	POST	התחברות מנהל
+/admin/dashboard	GET	דשבורד מנהל
+/admin/add-admin	POST	יצירת מנהל נוסף
+/admin/appointments-per-day	GET	גרף עומסים
 /blockedDays	CRUD	ניהול ימי חסימה
 🔮 Roadmap
 ✅ ניהול הרשאות מלא
