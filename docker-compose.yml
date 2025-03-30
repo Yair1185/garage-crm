@@ -20,8 +20,7 @@ services:
       - db
     environment:
       DATABASE_URL: postgres://postgres:password@db:5432/garage_crm
-    volumes:
-      - .:/app
+  
     restart: always
 
 volumes:

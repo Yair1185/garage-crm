@@ -1,25 +1,30 @@
-# ✅ Dockerfile - שורש הפרויקט
+# 🐳 בסיס קליל עם Node
 FROM node:18-alpine
 
-# Create app directory
+# תיקיית עבודה באפליקציה
 WORKDIR /app
 
-# Install backend dependencies
+# 🔁 העתקת קבצי backend (node)
 COPY package*.json ./
 COPY src ./src
+COPY .env ./
 RUN npm install
 
-# Install frontend dependencies and build React
+# 🔧 העתקת קוד פרונטנד ובנייתו
 COPY client ./client
 WORKDIR /app/client
+COPY client/package*.json ./
 RUN npm install
 RUN npm run build
 
-# Return to backend workdir
+# 📦 מחזיר לשרת
 WORKDIR /app
 
-# Expose backend port
+# 🌀 מוודא שהפרונטנד מה־build יהיה זמין ל־express
+# (בהנחה שאתה מגיש אותו מהשרת או נשתמש ב-NGINX בהמשך)
+
+# 📡 מאזין על פורט 5000
 EXPOSE 5000
 
-# Start the backend server
+# 🚀 הפעלת השרת
 CMD ["node", "src/server.js"]
