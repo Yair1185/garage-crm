@@ -16,7 +16,7 @@ const AdminDashboard = () => {
   useEffect(() => {
     const fetchAdminData = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/manager/dashboard', { withCredentials: true });
+        const res = await axios.get('http://localhost:5000/admin/dashboard', { withCredentials: true });
         setStats(res.data.stats);
         setCustomers(res.data.customers);
         setVehicles(res.data.vehicles);
@@ -35,7 +35,7 @@ const AdminDashboard = () => {
   useEffect(() => {
     const fetchChartData = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/manager/appointments-per-day', { withCredentials: true });
+        const res = await axios.get('http://localhost:5000/admin/appointments-per-day', { withCredentials: true });
         const labels = res.data.map(item => item.date);
         const data = res.data.map(item => parseInt(item.count));
         setChartData({
