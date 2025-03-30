@@ -1,10 +1,12 @@
+// ✅ AdminDashboard.jsx
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Card, Button, Table, Row, Col } from 'react-bootstrap';
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, BarElement, CategoryScale, LinearScale } from 'chart.js';
-      ChartJS.register(BarElement, CategoryScale, LinearScale); 
+
+ChartJS.register(BarElement, CategoryScale, LinearScale);
 
 const AdminDashboard = () => {
   const [stats, setStats] = useState({});
@@ -12,14 +14,16 @@ const AdminDashboard = () => {
   const [vehicles, setVehicles] = useState([]);
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const [chartData, setChartData] = useState(null); // נו, נו... אין יותר undefined.map()
 
   useEffect(() => {
     const fetchAdminData = async () => {
       try {
         const res = await axios.get('http://localhost:5000/admin/dashboard', { withCredentials: true });
-        setStats(res.data.stats);
-        setCustomers(res.data.customers);
-        setVehicles(res.data.vehicles);
+
+        setStats(res.data.stats || {});
+        setCustomers(res.data.customers || []);
+        setVehicles(res.data.vehicles || []);
       } catch (err) {
         setError('😵‍💫 שגיאה בטעינת נתוני הניהול');
       }
@@ -27,17 +31,14 @@ const AdminDashboard = () => {
     fetchAdminData();
   }, []);
 
-  const handleLogout = () => {
-    navigate('/admin-login');
-  };
-  const [chartData, setChartData] = useState({});
-
   useEffect(() => {
     const fetchChartData = async () => {
       try {
         const res = await axios.get('http://localhost:5000/admin/appointments-per-day', { withCredentials: true });
+
         const labels = res.data.map(item => item.date);
         const data = res.data.map(item => parseInt(item.count));
+
         setChartData({
           labels,
           datasets: [{
@@ -52,10 +53,13 @@ const AdminDashboard = () => {
     };
     fetchChartData();
   }, []);
-  
+
+  const handleLogout = () => {
+    navigate('/admin-login');
+  };
+
   const handleNewAdmin = () => {
-    // בקרוב יוביל לטופס הוספת מנהל
-    alert('🚧 בקרוב תוכל להוסיף מנהל חדש. בינתיים - קח קפה ☕');
+    alert('🚧 בקרוב תוכל להוסיף מנהל חדש. בינתיים - תשתה מים 💧');
   };
 
   return (
@@ -100,52 +104,60 @@ const AdminDashboard = () => {
       </Row>
 
       {/* טבלת לקוחות */}
-      <h4 className="mt-4">לקוחות רשומים</h4>
-      <Table striped bordered hover responsive className="text-end">
-        <thead>
-          <tr>
-            <th>שם</th>
-            <th>טלפון</th>
-            <th>אימייל</th>
-          </tr>
-        </thead>
-        <tbody>
-          {customers.map((c) => (
-            <tr key={c.id}>
-              <td>{c.name}</td>
-              <td>{c.phone}</td>
-              <td>{c.email}</td>
-            </tr>
-          ))}
-        </tbody>
-      </Table>
+      {Array.isArray(customers) && customers.length > 0 && (
+        <>
+          <h4 className="mt-4">לקוחות רשומים</h4>
+          <Table striped bordered hover responsive className="text-end">
+            <thead>
+              <tr>
+                <th>שם</th>
+                <th>טלפון</th>
+                <th>אימייל</th>
+              </tr>
+            </thead>
+            <tbody>
+              {customers.map((c) => (
+                <tr key={c.id}>
+                  <td>{c.name}</td>
+                  <td>{c.phone}</td>
+                  <td>{c.email}</td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        </>
+      )}
 
       {/* טבלת רכבים */}
-      <h4 className="mt-4">רכבים במערכת</h4>
-      <Table striped bordered hover responsive className="text-end">
-        <thead>
-          <tr>
-            <th>דגם</th>
-            <th>לוחית</th>
-            <th>לקוח</th>
-          </tr>
-        </thead>
-        <tbody>
-          {vehicles.map((v) => (
-            <tr key={v.id}>
-              <td>{v.model}</td>
-              <td>{v.plate}</td>
-              <td>{v.customer_name}</td>
-            </tr>
-          ))}
-        </tbody>
-      </Table>
-     
-      
+      {Array.isArray(vehicles) && vehicles.length > 0 && (
+        <>
+          <h4 className="mt-4">רכבים במערכת</h4>
+          <Table striped bordered hover responsive className="text-end">
+            <thead>
+              <tr>
+                <th>דגם</th>
+                <th>לוחית</th>
+                <th>לקוח</th>
+              </tr>
+            </thead>
+            <tbody>
+              {vehicles.map((v) => (
+                <tr key={v.id}>
+                  <td>{v.model}</td>
+                  <td>{v.plate}</td>
+                  <td>{v.customer_name}</td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        </>
+      )}
+
+      {/* גרף תורים */}
       <h4 className="mt-5">עומסים בשבוע הקרוב</h4>
-{chartData.labels && (
-  <Bar data={chartData} options={{ responsive: true, plugins: { legend: { display: false } } }} />
-)}
+      {chartData && (
+        <Bar data={chartData} options={{ responsive: true, plugins: { legend: { display: false } } }} />
+      )}
 
       {/* כפתורים */}
       <div className="d-flex gap-3 mt-4">
