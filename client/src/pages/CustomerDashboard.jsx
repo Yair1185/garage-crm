@@ -71,29 +71,20 @@ const CustomerDashboard = () => {
 
         <h5 className="fw-bold">התורים שלי:</h5>
         {!appointment ? (
-  <>
-    <div className="alert alert-info mt-3">לא קיים תור מתואם</div>
-    <button
-      className="btn btn-primary mt-3 w-100 rounded-pill"
-      onClick={() => navigate('/new-appointment')}
-    >
-      קבע תור חדש
-    </button>
-  </>
-) : (
-  <div className="card bg-light p-3 mt-3">
-    <p className="fw-bold mb-1 text-success">תור מתואם</p>
-    <p className="mb-1"><strong>תאריך:</strong> {formatDate(appointment.appointment_date)}</p>
-    <p className="mb-1"><strong>שעה:</strong> {formatTime(appointment.appointment_time)}</p>
-    <p className="mb-3"><strong>שירות:</strong> {appointment.service_type}</p>
+          <div className="alert alert-info mt-3">לא קיים תור מתואם</div>
+        ) : (
+          <div className="card bg-light p-3 mt-3">
+            <p className="fw-bold mb-1 text-success">תור מתואם</p>
+            <p className="mb-1"><strong>תאריך:</strong> {formatDate(appointment.appointment_date)}</p>
+            <p className="mb-1"><strong>שעה:</strong> {formatTime(appointment.appointment_time)}</p>
+            <p className="mb-3"><strong>שירות:</strong> {appointment.service_type}</p>
 
-    <div className="d-flex gap-2 justify-content-center">
-      <button className="btn btn-danger rounded-pill" onClick={handleCancel}>בטל תור</button>
-      <button className="btn btn-success rounded-pill" onClick={handleEdit}>שינוי תור</button>
-    </div>
-  </div>
-)}
-
+            <div className="d-flex gap-2 justify-content-center">
+              <button className="btn btn-danger rounded-pill" onClick={handleCancel}>בטל תור</button>
+              <button className="btn btn-success rounded-pill" onClick={handleEdit}>שינוי תור</button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

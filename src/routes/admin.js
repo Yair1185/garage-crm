@@ -93,7 +93,7 @@ router.get('/dashboard', isAdmin,async (req, res) => {
     const vehicles = await pool.query('SELECT COUNT(*) FROM vehicles');
     const appointments = await pool.query('SELECT COUNT(*) FROM appointments');
     const commonService = await pool.query(`
-      SELECT service_type, COUNT(service_type) AS count 
+      SELECT service, COUNT(service) AS count 
       FROM appointments 
       GROUP BY service_type  
       ORDER BY count DESC 
