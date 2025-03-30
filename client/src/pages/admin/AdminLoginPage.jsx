@@ -11,7 +11,7 @@ export default function AdminLoginPage() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/manager/login', {
+      await axios.post('http://localhost:5000/admin/login', {
         username,
         password,
       }, { withCredentials: true });
