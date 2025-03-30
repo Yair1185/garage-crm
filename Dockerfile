@@ -7,7 +7,7 @@ WORKDIR /app
 # 🔁 העתקת קבצי backend (node)
 COPY package*.json ./
 COPY src ./src
-COPY .env ./
+ # COPY .env ./ 
 RUN npm install
 
 # 🔧 העתקת קוד פרונטנד ובנייתו
@@ -15,6 +15,10 @@ COPY client ./client
 WORKDIR /app/client
 COPY client/package*.json ./
 RUN npm install
+# ✅ הוספה חשובה כאן:
+    COPY client/src ./src
+    
+
 RUN npm run build
 
 # 📦 מחזיר לשרת
