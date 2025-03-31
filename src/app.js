@@ -21,7 +21,15 @@ app.use(session({
   }
 }));
 // 📌 Middleware
-app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://garage-crm-app.onrender.com"
+];
+
+app.use(cors({
+  origin: allowedOrigins,
+  credentials: true
+}));
 
 
 app.use(express.json());
