@@ -32,9 +32,6 @@ app.use('/customers', customerRoutes);
 app.use('/appointments', appointmentRoutes);
 app.use('/admin', adminRoutes);
 
-// 📌 ברירת מחדל - מסלול לא קיים
-app.use((req, res) => {
-  res.status(404).json({ message: "Route not found" });
-});
+
 
 module.exports = app;
