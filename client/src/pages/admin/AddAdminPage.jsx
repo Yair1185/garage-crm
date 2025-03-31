@@ -12,7 +12,7 @@ export default function AddAdminPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/manager/add-admin', {
+      await axios.post('https://garage-crm-app.onrender.com/admin/add-admin', {
         username,
         password
       }, { withCredentials: true });

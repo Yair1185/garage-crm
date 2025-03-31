@@ -8,7 +8,7 @@ export default function useAdminAuth() {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        await axios.get('http://localhost:5000/admin/check-auth');
+        await axios.get('https://garage-crm-app.onrender.com/admin/check-auth');
         setIsAuthenticated(true);
       } catch (error) {
         setIsAuthenticated(false);

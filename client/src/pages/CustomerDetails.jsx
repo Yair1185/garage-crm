@@ -7,7 +7,7 @@ const CustomerDetails = () => {
   const [message, setMessage] = useState('');
 
   useEffect(() => {
-    axios.get('http://localhost:5000/customers/dashboard', { withCredentials: true })
+    axios.get('https://garage-crm-app.onrender.com/customers/dashboard', { withCredentials: true })
       .then(res => {
         setCustomer(res.data.customer);
         setVehicles(res.data.vehicles);
@@ -32,7 +32,7 @@ const CustomerDetails = () => {
   const handleSave = async () => {
     try {
       // עדכון פרטי לקוח
-      await axios.put('http://localhost:5000/customers/update', {
+      await axios.put('https://garage-crm-app.onrender.com/customers/update', {
         phone: customer.phone,
         email: customer.email
       }, { withCredentials: true });
@@ -40,7 +40,7 @@ const CustomerDetails = () => {
       // שליחת רכבים חדשים בלבד
       for (let v of vehicles) {
         if (!v.id && v.model && v.plate) {
-          await axios.post('http://localhost:5000/customers/add-vehicle', {
+          await axios.post('https://garage-crm-app.onrender.com/customers/add-vehicle', {
             customer_id: customer.id,
             model: v.model,
             plate: v.plate

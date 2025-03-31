@@ -13,7 +13,7 @@ export default function RegisterPage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    axios.post('http://localhost:5000/customers/register', {
+    axios.post('https://garage-crm-app.onrender.com/customers/register', {
       name, phone, email, model, plate
     }, { withCredentials: true })
       .then(() => {

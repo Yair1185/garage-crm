@@ -11,7 +11,7 @@ export default function AdminLoginPage() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/admin/login', {
+      await axios.post('https://garage-crm-app.onrender.com/admin/login', {
         username,
         password,
       }, { withCredentials: true });

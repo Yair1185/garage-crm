@@ -8,7 +8,7 @@ const CustomerDashboard = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get('http://localhost:5000/customers/dashboard', { withCredentials: true })
+    axios.get('https://garage-crm-app.onrender.com/customers/dashboard', { withCredentials: true })
       .then((res) => {
         setCustomer(res.data.customer);
         const future = res.data.appointments.find(a => new Date(a.appointment_date) >= new Date());
@@ -20,7 +20,7 @@ const CustomerDashboard = () => {
   }, []);
 
   const handleLogout = () => {
-    axios.get('http://localhost:5000/customers/logout', { withCredentials: true }).then(() => {
+    axios.get('https://garage-crm-app.onrender.com/customers/logout', { withCredentials: true }).then(() => {
       navigate('/');
     });
   };
@@ -30,7 +30,7 @@ const CustomerDashboard = () => {
   };
 
   const handleCancel = () => {
-    axios.delete(`http://localhost:5000/appointments/${appointment.id}`, { withCredentials: true })
+    axios.delete(`https://garage-crm-app.onrender.com/appointments/${appointment.id}`, { withCredentials: true })
       .then(() => {
         setAppointment(null);
       });

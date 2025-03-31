@@ -18,7 +18,7 @@ export default function CustomerNewAppointment() {
   const appointmentToEdit = location.state?.appointment;
 
   useEffect(() => {
-    axios.get('http://localhost:5000/customers/dashboard', { withCredentials: true })
+    axios.get('https://garage-crm-app.onrender.com/customers/dashboard', { withCredentials: true })
       .then(res => {
         setVehicles(res.data.vehicles);
         if (appointmentToEdit) {

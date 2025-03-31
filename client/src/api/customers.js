@@ -1,7 +1,7 @@
 // ✅ client/src/api/customers.js
 import axios from 'axios';
 
-const API = axios.create({ baseURL: 'http://localhost:5000' ,
+const API = axios.create({ baseURL: 'https://garage-crm-app.onrender.com' ,
   withCredentials: true // ✅ חובה לשמירת ה-session
 });
 

@@ -10,7 +10,7 @@ export default function CustomerProfile() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get('http://localhost:5000/customers/dashboard', { withCredentials: true })
+    axios.get('https://garage-crm-app.onrender.com/customers/dashboard', { withCredentials: true })
       .then(res => {
         setCustomer(res.data.customer);
         setVehicles(res.data.vehicles);
@@ -32,7 +32,7 @@ export default function CustomerProfile() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    axios.put('http://localhost:5000/customers/update-profile', {
+    axios.put('https://garage-crm-app.onrender.com/customers/update-profile', {
       customer,
       vehicles
     }, { withCredentials: true })

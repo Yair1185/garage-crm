@@ -10,7 +10,7 @@ const BlockedDays = () => {
 
   const fetchBlockedDays = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/blockedDays');
+      const res = await axios.get('https://garage-crm-app.onrender.com/blockedDays');
       setBlockedDays(res.data);
     } catch (err) {
       setError('❌ Failed to load blocked days');
@@ -23,7 +23,7 @@ const BlockedDays = () => {
 
   const handleBlockDate = async () => {
     try {
-      await axios.post('http://localhost:5000/blockedDays/block', { date: newDate });
+      await axios.post('https://garage-crm-app.onrender.com/blockedDays/block', { date: newDate });
       setMessage('✅ Date blocked successfully');
       setNewDate('');
       fetchBlockedDays();
@@ -34,7 +34,7 @@ const BlockedDays = () => {
 
   const handleUnblockDate = async (date) => {
     try {
-      await axios.delete(`http://localhost:5000/blockedDays/unblock/${date}`);
+      await axios.delete(`https://garage-crm-app.onrender.com/blockedDays/unblock/${date}`);
       setMessage('✅ Date unblocked');
       fetchBlockedDays();
     } catch (err) {
