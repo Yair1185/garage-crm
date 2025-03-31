@@ -9,7 +9,7 @@ app.use(express.static(path.join(__dirname, '../client/dist')));
 
 // 🌐 כל בקשה שאינה API מחזירה את index.html (עבור React Router)
 app.get('*', (req, res) => {
-  res.sendFile(path.resolve(__dirname, '../client/dist', 'index.html'));
+  res.sendFile(path.resolve(__dirname, '../client/dist/index.html'));
 });
 
 app.listen(PORT, () => {
