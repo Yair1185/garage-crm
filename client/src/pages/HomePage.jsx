@@ -36,13 +36,13 @@ export default function HomePage() {
 
       {/* כרטיס מרכזי */}
       <div className="home-card mx-auto shadow-lg text-end p-4 bg-white">
-        <h2 className="fw-bold mb-2">ברוכים הבאים 🚗</h2>
+        <h2 className="fw-bold mb-2">מוסך מרכת המשנה (בהרצה) </h2>
         <p className="text-muted">שירות מקצועי, אמין ומסור לרכב שלך<br />כבר מעל 8 שנים!</p>
 
         <ul className="list-unstyled mt-3">
-          <li>✔️ תיאום תור מקוון</li>
-          <li>✔️ דיאגנוסטיקה ממוחשבת</li>
-          <li>✔️ טיפול תקופתי ואחריות</li>
+          <li> תיאום תור מקוון</li>
+          <li> דיאגנוסטיקה ממוחשבת</li>
+          <li> טיפול תקופתי ואחריות</li>
         </ul>
 
         <hr />

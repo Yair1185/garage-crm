@@ -17,7 +17,7 @@ export default function RegisterPage() {
       name, phone, email, model, plate
     }, { withCredentials: true })
       .then(() => {
-        setMessage('נרשמת בהצלחה!');
+        setMessage('נרשמת בהצלחה, מייד תועבר לעמוד ההתחברות.');
         setTimeout(() => navigate('/login'), 2000);
       })
       .catch(err => setMessage(err.response?.data?.error || 'שגיאה בהרשמה'));
@@ -55,7 +55,7 @@ export default function RegisterPage() {
           </div>
 
           <div className="mb-3 text-end">
-            <label className="form-label">מספר רכב (לוחית רישוי)</label>
+            <label className="form-label">מספר רכב </label>
             <input type="text" className="form-control" value={plate}
               onChange={(e) => setPlate(e.target.value)} required />
           </div>

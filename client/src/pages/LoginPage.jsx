@@ -12,7 +12,7 @@ export default function LoginPage() {
     e.preventDefault();
     axios.post('https://garage-crm-app.onrender.com/customers/login', { phone, plate }, { withCredentials: true })
       .then(() => {
-        setMessage('התחברת בהצלחה!');
+        setMessage('התחברת בהצלחה, מייד תועבר לאיזור האישי.');
         setTimeout(() => navigate('/dashboard'), 1500);
       })
       .catch(err => setMessage(err.response?.data?.error || 'שגיאה בהתחברות'));
