@@ -26,7 +26,7 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   cookie: {
-    secure: process.env.NODE_ENV === 'production',
+    secure: true,        // Render תמיד HTTPS, אז לא צריך תנאי
     httpOnly: true,
     sameSite: 'none',
     maxAge: 1000 * 60 * 60 * 24 // 1 יום
