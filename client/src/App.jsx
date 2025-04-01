@@ -30,44 +30,44 @@ const App = () => {
 
         {/* לקוחות */}
         <Route path="/dashboard" element={
-          <ProtectedRoute role="customer">
+          <ProtectedRoute>
             <CustomerDashboard />
           </ProtectedRoute>
         } />
         <Route path="/my-details" element={
-          <ProtectedRoute role="customer">
+          <ProtectedRoute>
             <CustomerDetails />
           </ProtectedRoute>
         } />
         <Route path="/my-appointments" element={
-          <ProtectedRoute role="customer">
+          <ProtectedRoute>
             <CustomerPastAppointments />
           </ProtectedRoute>
         } />
         <Route path="/profile" element={
-          <ProtectedRoute role="customer">
+          <ProtectedRoute>
             <CustomerProfile />
           </ProtectedRoute>
         } />
         <Route path="/new-appointment" element={
-          <ProtectedRoute role="customer">
+          <ProtectedRoute>
             <CustomerNewAppointment />
           </ProtectedRoute>
         } />
 
         {/* מנהלים */}
         <Route path="/admin" element={
-          <ProtectedRoute role="admin">
+          <ProtectedRoute>
             <AdminDashboard />
           </ProtectedRoute>
         } />
         <Route path="/admin/blocked-days" element={
-          <ProtectedRoute role="admin">
+          <ProtectedRoute>
             <BlockedDays />
           </ProtectedRoute>
         } />
         <Route path="/admin/add" element={
-          <ProtectedRoute role="admin">
+          <ProtectedRoute>
             <AddAdminPage />
           </ProtectedRoute>
         } />
