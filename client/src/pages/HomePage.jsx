@@ -8,7 +8,7 @@ export default function HomePage() {
   const navigate = useNavigate();
 
   return (
-    <div className="container mt-4">
+    <div className="container mt-4 center">
   {/* כפתורים עליונים בשורה בפני עצמם */}
   <div className="d-flex justify-content-end gap-3 mb-4">
   <div className="text-center">
@@ -35,11 +35,11 @@ export default function HomePage() {
 
 
       {/* כרטיס מרכזי */}
-      <div className="home-card mx-auto shadow-lg text-end p-4 bg-white">
+      <div className="home-card mx-auto shadow-lg text-center p-4 bg-white text-center">
         <h2 className="fw-bold mb-2">מוסך מרכת המשנה (בהרצה) </h2>
         <p className="text-muted">שירות מקצועי, אמין ומסור לרכב שלך<br />כבר מעל 8 שנים!</p>
 
-        <ul className="list-unstyled mt-3">
+        <ul className="list-unstyled mt-3 text-center" >
           <li> תיאום תור מקוון</li>
           <li> דיאגנוסטיקה ממוחשבת</li>
           <li> טיפול תקופתי ואחריות</li>
@@ -47,13 +47,13 @@ export default function HomePage() {
 
         <hr />
 
-        <p className="mb-1">
+        <p className="mb-1 text-center">
           <span className="badge bg-warning text-dark">שעות פעילות</span><br />
           א׳-ה׳ 07:30–16:30 | יום ו׳ 07:30–11:30
         </p>
 
-        <p>📍 באר שבע | ☎️ 08-6283123</p>
-
+        <p>הרתך 9, באר שבע</p>
+        
         <div className="d-flex gap-2 mt-3">
           <a href="https://waze.com/ul" target="_blank" className="btn btn-success w-50">
             <i className="bi bi-signpost-2-fill me-1"></i> Waze
