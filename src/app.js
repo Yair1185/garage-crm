@@ -15,14 +15,14 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   cookie: {
-    secure: false,           // false כי אתה לא על HTTPS (אם היית על HTTPS – true)
+    secure: process.env.NODE_ENV === 'production',          // false כי אתה לא על HTTPS (אם היית על HTTPS – true)
     httpOnly: true,
-    sameSite: 'lax'          // ✅ קריטי במצב שאתה עליו (cross-origin)
+    sameSite: 'none'          // ✅ קריטי במצב שאתה עליו (cross-origin)
   }
 }));
 // 📌 Middleware
 const allowedOrigins = [
-  "http://localhost:5173",
+  
   "https://garage-crm-app.onrender.com"
 ];
 
