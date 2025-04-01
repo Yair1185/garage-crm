@@ -1,23 +1,35 @@
 require('dotenv').config();
 const express = require('express');
 const session = require('express-session');
+const pgSession = require('connect-pg-simple')(session);
+const { Pool } = require('pg');
 const cors = require('cors');
 const customerRoutes = require('./routes/customers');
 const appointmentRoutes = require('./routes/appointments');
 const adminRoutes = require('./routes/admin');
 const db = require('./db'); // מעכשיו PostgreSQL
-
+const pgPool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false
+  }
+});
 const blockedRoutes = require('./routes/blockedDays');
 const app = express();
 
 app.use(session({
-  secret: process.env.SESSION_SECRET || "supersecret",
+  store: new pgSession({
+    pool: pgPool,
+    tableName: 'session'
+  }),
+  secret: process.env.SESSION_SECRET || 'supersecret',
   resave: false,
   saveUninitialized: false,
   cookie: {
-    secure: process.env.NODE_ENV === 'production',          // false כי אתה לא על HTTPS (אם היית על HTTPS – true)
+    secure: process.env.NODE_ENV === 'production',
     httpOnly: true,
-    sameSite: 'none'          // ✅ קריטי במצב שאתה עליו (cross-origin)
+    sameSite: 'none',
+    maxAge: 1000 * 60 * 60 * 24 // 1 יום
   }
 }));
 // 📌 Middleware
