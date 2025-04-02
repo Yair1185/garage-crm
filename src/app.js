@@ -17,6 +17,17 @@ const pgPool = new Pool({
   ssl: { rejectUnauthorized: false }
 });
 
+// 📌 Middleware
+const allowedOrigins = [
+  
+  "https://garage-crm-app.onrender.com"
+];
+
+app.use(cors({
+  origin: allowedOrigins,
+  credentials: true
+}));
+
 app.use(session({
   store: new pgSession({
     pool: pgPool,
@@ -33,17 +44,6 @@ app.use(session({
     maxAge: 1000 * 60 * 60 * 24
   }
 }));
-// 📌 Middleware
-const allowedOrigins = [
-  
-  "https://garage-crm-app.onrender.com"
-];
-
-app.use(cors({
-  origin: allowedOrigins,
-  credentials: true
-}));
-
 
 app.use(express.json());
 app.use('/blockedDays', blockedRoutes);
@@ -52,7 +52,5 @@ app.use('/blockedDays', blockedRoutes);
 app.use('/customers', customerRoutes);
 app.use('/appointments', appointmentRoutes);
 app.use('/admin', adminRoutes);
-
-
 
 module.exports = app;

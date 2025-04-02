@@ -168,6 +168,7 @@ router.get('/logout',isCustomer, (req, res) => {
 
 // ✅ בדיקת התחברות לקוח
 router.get('/check-auth', (req, res) => {
+  console.log('SESSION DEBUG:', req.session); // 👈
   if (req.session?.customerId) {
     return res.sendStatus(200);
   }
