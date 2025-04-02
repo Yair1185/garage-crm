@@ -10,7 +10,8 @@ export default function LoginPage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    axios.post('https://garage-crm-app.onrender.com/customers/login', { phone, plate }, { withCredentials: true })
+    axios.post('https://garage-crm-app.onrender.com/customers/login', 
+      { phone, plate }, { withCredentials: true })
       .then(() => {
         setMessage('התחברת בהצלחה, מייד תועבר לאיזור האישי.');
         setTimeout(() => navigate('/dashboard'), 1500);

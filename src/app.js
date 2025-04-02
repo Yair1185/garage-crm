@@ -19,12 +19,17 @@ const pgPool = new Pool({
 
 // 📌 Middleware
 const allowedOrigins = [
-  
-  "https://garage-crm-app.onrender.com"
+  'https://garage-crm-app.onrender.com',
 ];
 
 app.use(cors({
-  origin: allowedOrigins,
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true
 }));
 
