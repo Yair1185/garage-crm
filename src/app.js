@@ -33,6 +33,9 @@ app.use(cors({
   credentials: true
 }));
 
+// Trust the first proxy (common setting for Render/Heroku)
+app.set('trust proxy', 1);
+
 app.use(session({
   store: new pgSession({
     pool: pgPool,
