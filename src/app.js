@@ -22,6 +22,7 @@ app.use(session({
     pool: pgPool,
     tableName: 'session'
   }),
+  name: 'connect.sid',
   secret: process.env.SESSION_SECRET || 'supersecret',
   resave: false,
   saveUninitialized: false,
