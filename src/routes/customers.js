@@ -30,11 +30,9 @@ router.post('/register', async (req, res) => {
   }
 });
 
-// ✅ Login Route - Modern Version with async/await
 router.post('/login', async (req, res) => {
   const { phone, plate } = req.body;
 
-  // בדיקה שהשדות לא ריקים
   if (!phone || !plate) {
     return res.status(400).json({ error: 'Phone and Plate are required' });
   }
@@ -53,9 +51,18 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
-    // שמירת הלקוח ב-session
+    // ✅ שמירת סשן והמתנה לסיום
     req.session.customerId = result.rows[0].customer_id;
-    res.status(200).json({ message: 'Login successful', customerId: result.rows[0].customer_id });
+
+    req.session.save((err) => {
+      if (err) {
+        console.error('❌ Session save failed:', err);
+        return res.status(500).json({ error: 'Session error' });
+      }
+
+      console.log('✅ Session saved:', req.session);
+      res.status(200).json({ message: 'Login successful' });
+    });
 
   } catch (err) {
     console.error('❌ Login error:', err);
