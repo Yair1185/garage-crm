@@ -168,11 +168,10 @@ router.get('/logout',isCustomer, (req, res) => {
 
 // ✅ בדיקת התחברות לקוח
 router.get('/check-auth', (req, res) => {
-  if (req.session?.customer) {
+  if (req.session?.customerId) {
     return res.sendStatus(200);
   }
   return res.sendStatus(401);
 });
-
 
 module.exports = router;
