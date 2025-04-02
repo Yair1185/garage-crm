@@ -8,14 +8,14 @@ const customerRoutes = require('./routes/customers');
 const appointmentRoutes = require('./routes/appointments');
 const adminRoutes = require('./routes/admin');
 const db = require('./db'); // מעכשיו PostgreSQL
-const pgPool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false
-  }
-});
+
 const blockedRoutes = require('./routes/blockedDays');
 const app = express();
+
+const pgPool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false }
+});
 
 app.use(session({
   store: new pgSession({
@@ -23,14 +23,14 @@ app.use(session({
     tableName: 'session'
   }),
   name: 'connect.sid',
-  secret: process.env.SESSION_SECRET || 'supersecret',
+  secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
   cookie: {
-    secure: true,        // Render תמיד HTTPS, אז לא צריך תנאי
-    httpOnly: true,
+    secure: true,
     sameSite: 'none',
-    maxAge: 1000 * 60 * 60 * 24 // 1 יום
+    httpOnly: true,
+    maxAge: 1000 * 60 * 60 * 24
   }
 }));
 // 📌 Middleware
