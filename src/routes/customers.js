@@ -166,4 +166,13 @@ router.get('/logout',isCustomer, (req, res) => {
   res.status(200).json({ message: 'Logged out successfully' });
 });
 
+// ✅ בדיקת התחברות לקוח
+router.get('/check-auth', (req, res) => {
+  if (req.session?.customer) {
+    return res.sendStatus(200);
+  }
+  return res.sendStatus(401);
+});
+
+
 module.exports = router;

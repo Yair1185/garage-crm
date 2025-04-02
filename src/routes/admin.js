@@ -120,13 +120,12 @@ router.get('/logout', (req, res) => {
   res.status(200).json({ message: 'Logged out successfully' });
 });
 
-// ✅ src/routes/admin.js
+// ✅ בדיקת התחברות מנהל
 router.get('/check-auth', (req, res) => {
-  if (req.session && req.session.admin) {
-    res.status(200).json({ authenticated: true });
-  } else {
-    res.status(401).json({ authenticated: false });
+  if (req.session?.admin) {
+    return res.sendStatus(200);
   }
+  return res.sendStatus(401);
 });
 
 module.exports = router;
