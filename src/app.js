@@ -19,7 +19,7 @@ const pgPool = new Pool({
 
 // 📌 Middleware
 const allowedOrigins = [
-  'https://garage-crm-app.onrender.com',
+  "https://garage-crm-app.onrender.com",
 ];
 
 app.use(cors({
