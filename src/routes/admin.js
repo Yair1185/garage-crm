@@ -4,7 +4,7 @@ const router = express.Router();
 const pool = require('../db');
 const bcrypt = require('bcrypt');
 const isAdmin = require('../middleware/isAdmin');
-
+const hashPassword = require('../hashPassword');
 
 // ✅ גרף: תורים עתידיים לפי יום
 router.get('/appointments-per-day',isAdmin, async (req, res) => {
@@ -127,5 +127,25 @@ router.get('/check-auth', (req, res) => {
   }
   return res.sendStatus(401);
 });
+
+router.post('/register', async (req, res) => {
+  const { username, password } = req.body;
+  try {
+    const hashedPassword = await hashPassword(password);
+
+    const existing = await db.query('SELECT * FROM admins WHERE username = $1', [username]);
+    if (existing.rows.length > 0) {
+      return res.status(400).json({ error: 'Admin already exists' });
+    }
+
+    await db.query('INSERT INTO admins (username, password) VALUES ($1, $2)', [username, hashedPassword]);
+    res.status(201).json({ message: 'Admin created' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+
 
 module.exports = router;

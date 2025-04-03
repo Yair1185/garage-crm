@@ -17,6 +17,7 @@ import BlockedDays from './pages/admin/BlockedDays';
 import AddAdminPage from './pages/admin/AddAdminPage';
 
 import ProtectedRoute from './components/ProtectedRoute';
+import InitialAdminSetup from './pages/admin/InitialAdminSetup';
 
 const App = () => {
   return (
@@ -94,7 +95,13 @@ const App = () => {
             </ProtectedRoute>
           }
         />
+<Route path="/setup-admin" element={<InitialAdminSetup />} />
+
       </Routes>
+      
+      
+
+     
     </div>
   );
 };
