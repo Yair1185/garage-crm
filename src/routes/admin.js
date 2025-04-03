@@ -133,18 +133,19 @@ router.post('/register', async (req, res) => {
   try {
     const hashedPassword = await hashPassword(password);
 
-    const existing = await db.query('SELECT * FROM admins WHERE username = $1', [username]);
+    const existing = await pool.query('SELECT * FROM admin WHERE username = $1', [username]);
     if (existing.rows.length > 0) {
       return res.status(400).json({ error: 'Admin already exists' });
     }
 
-    await db.query('INSERT INTO admins (username, password) VALUES ($1, $2)', [username, hashedPassword]);
+    await pool.query('INSERT INTO admin (username, password) VALUES ($1, $2)', [username, hashedPassword]);
     res.status(201).json({ message: 'Admin created' });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });
   }
 });
+
 
 
 
