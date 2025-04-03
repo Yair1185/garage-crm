@@ -1,8 +1,9 @@
 // hashPassword.js
 const bcrypt = require('bcrypt');
 
-const passwordToHash = 'admin123'; // הסיסמה שאתה רוצה להצפין
+async function hashPassword(password) {
+  const salt = await bcrypt.genSalt(10);
+  return await bcrypt.hash(password, salt);
+}
 
-bcrypt.hash(passwordToHash, 10).then((hashedPassword) => {
-  console.log('סיסמה מוצפנת:', hashedPassword);
-});
+module.exports = hashPassword;
