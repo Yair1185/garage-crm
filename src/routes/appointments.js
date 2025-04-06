@@ -57,17 +57,25 @@ router.get('/past', async (req, res) => {
   if (!customerId) return res.status(401).json({ error: 'Unauthorized' });
 
   try {
+    const customerResult = await pool.query(
+      'SELECT name FROM customers WHERE id = $1',
+      [customerId]
+    );
+    const name = customerResult.rows[0]?.name || 'לקוח';
+
     const result = await pool.query(`
       SELECT a.*, v.model, v.plate
       FROM appointments a
       JOIN vehicles v ON a.vehicle_id = v.id
       WHERE a.customer_id = $1
-        AND (appointment_date < CURRENT_DATE OR 
-             (appointment_date = CURRENT_DATE AND appointment_time < CURRENT_TIME))
+        AND (
+          appointment_date < CURRENT_DATE
+          OR (appointment_date = CURRENT_DATE AND appointment_time < CURRENT_TIME)
+        )
       ORDER BY appointment_date DESC
     `, [customerId]);
 
-    res.status(200).json(result.rows);
+    res.status(200).json({ name, appointments: result.rows });
   } catch (err) {
     console.error('❌ Error fetching past appointments:', err);
     res.status(500).json({ error: 'Failed to fetch past appointments' });

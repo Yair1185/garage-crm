@@ -7,22 +7,31 @@ import { getPastAppointments } from '../api/appointments';
 
 export default function CustomerPastAppointments() {
   const [appointments, setAppointments] = useState([]);
+  const [customerName, setCustomerName] = useState('');
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
 
-  getPastAppointments()
-  .then(res => setAppointments(res.data))
-  .catch(() => setMessage('שגיאה בטעינת התורים'));
-
+  useEffect(() => {
+    getPastAppointments()
+      .then(res => {
+        setAppointments(res.data.appointments || []);
+        setCustomerName(res.data.name || 'לקוח');
+      })
+      .catch(() => setMessage('שגיאה בטעינת התורים'));
+  }, []);
 
   return (
     <div className="home-container">
       <div className="home-card shadow-lg text-end">
-        <h3 className="fw-bold mb-4">תורים קודמים</h3>
+        <h3 className="fw-bold mb-4">שלום {customerName} 👋</h3>
+        <h4 className="fw-bold mb-4">תורים קודמים</h4>
+
         {message && <div className="alert alert-danger">{message}</div>}
 
         {appointments.length === 0 ? (
-          <p>אין תורים קודמים להצגה.</p>
+          <div className="alert alert-info text-center">
+            אין לך תורים קודמים להצגה.
+          </div>
         ) : (
           appointments.map((a) => (
             <Card key={a.id} className="mb-3 text-end">
