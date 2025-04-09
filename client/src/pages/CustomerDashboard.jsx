@@ -85,8 +85,9 @@ const CustomerDashboard = () => {
           <div className="card bg-light p-3 mt-3">
             <p className="fw-bold mb-1 text-success">תור מתואם</p>
             <p className="mb-1"><strong>תאריך:</strong> {formatDate(appointment.appointment_date)}</p>
-            <p className="mb-1"><strong>שעה:</strong> {formatTime(appointment.appointment_time)}</p>
             <p className="mb-3"><strong>שירות:</strong> {appointment.service_type}</p>
+            <p className="mb-1"><strong>שעה:</strong> {formatTime(appointment.appointment_time)}</p>
+            
 
             <div className="d-flex gap-2 justify-content-center">
               <button className="btn btn-danger rounded-pill" onClick={handleCancel}>בטל תור</button>

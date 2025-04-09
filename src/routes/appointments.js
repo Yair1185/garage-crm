@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../db');
 const isCustomer = require('../middleware/isCustomer');
+const dayjs = require('dayjs');
 
 // ✅ יצירת תור
 router.post('/',isCustomer, async (req, res) => {
@@ -115,21 +116,122 @@ router.delete('/:id', async (req, res) => {
     const check = await pool.query('SELECT * FROM appointments WHERE id = $1 AND customer_id = $2', [appointmentId, customerId]);
     if (check.rows.length === 0) return res.status(403).json({ error: 'אין לך הרשאה לבטל תור זה' });
 
-    // בדיקת זמן - ביטול אפשרי רק אם נשארו יותר מ-24 שעות
-    const appointmentDate = check.rows[0].appointment_date;
-    const now = new Date();
-    const appointment = new Date(appointmentDate);
-    const hoursDiff = (appointment - now) / 36e5;
-
-    if (hoursDiff < 24) {
-      return res.status(400).json({ error: 'לא ניתן לבטל פחות מ-24 שעות לפני מועד התור. נא פנה טלפונית.' });
-    }
 
     await pool.query('DELETE FROM appointments WHERE id = $1', [appointmentId]);
     res.status(200).json({ message: 'התור בוטל בהצלחה.' });
   } catch (err) {
     console.error('❌ Error deleting appointment:', err);
     res.status(500).json({ error: 'Failed to delete appointment' });
+  }
+});
+
+// ✅ שליפת תורים זמינים מהקאש לפי סוג שירות
+router.get('/cached-slots', async (req, res) => {
+  const { serviceType } = req.query;
+
+  if (!serviceType) {
+    return res.status(400).json({ error: 'Missing serviceType parameter' });
+  }
+
+  try {
+    const result = await pool.query(
+      `SELECT appointment_date, appointment_time
+       FROM available_slots_cache
+       WHERE service_type = $1
+       ORDER BY appointment_date, appointment_time
+       LIMIT 3`,
+      [serviceType]
+    );
+
+    res.status(200).json(result.rows);
+  } catch (err) {
+    console.error('❌ Error fetching cached slots:', err);
+    res.status(500).json({ error: 'Failed to fetch cached slots' });
+  }
+});
+
+const SERVICE_DURATIONS = {
+  'טיפול קטן': 1,
+  'טיפול גדול': 2,
+  'בדיקה ראשונית': 3,
+  'תקלה': 3
+};
+
+const generateSlots = (duration) => {
+  const slots = [];
+  const OPEN = 7.5;
+  const CLOSE = 14;
+
+  for (let h = OPEN; h < CLOSE; h += 0.5) {
+    const end = h + duration;
+    if (end <= CLOSE) {
+      const hour = Math.floor(h);
+      const min = (h % 1) === 0 ? '00' : '30';
+      slots.push(`${hour.toString().padStart(2, '0')}:${min}`);
+    }
+  }
+
+  return slots;
+};
+
+const isSlotAvailable = (slot, duration, takenSlots) => {
+  const [hour, min] = slot.split(':').map(Number);
+  const start = hour + min / 60;
+  const end = start + duration;
+
+  for (const t of takenSlots) {
+    const [tHour, tMin] = t.split(':').map(Number);
+    const tStart = tHour + tMin / 60;
+    const tEnd = tStart + 1;
+
+    if (
+      (start >= tStart && start < tEnd) ||
+      (end > tStart && end <= tEnd) ||
+      (start <= tStart && end >= tEnd)
+    ) return false;
+  }
+
+  return true;
+};
+
+router.get('/available-dates', async (req, res) => {
+  const { serviceType } = req.query;
+  if (!serviceType || !SERVICE_DURATIONS[serviceType]) {
+    return res.status(400).json({ error: 'Missing or invalid serviceType' });
+  }
+
+  const duration = SERVICE_DURATIONS[serviceType];
+  const availableDates = [];
+
+  try {
+    const blockedRes = await pool.query('SELECT date FROM blocked_days');
+    const blockedDates = blockedRes.rows.map(row => row.date.toISOString().split('T')[0]);
+
+    for (let i = 0; i < 150; i++) {
+      const dateObj = dayjs().add(i, 'day');
+      const dateStr = dateObj.format('YYYY-MM-DD');
+      const weekday = dateObj.day(); // 6 = Saturday
+
+      if (weekday === 6 || blockedDates.includes(dateStr)) continue;
+
+      const takenRes = await pool.query(
+        'SELECT appointment_time FROM appointments WHERE appointment_date = $1',
+        [dateStr]
+      );
+      const taken = takenRes.rows.map(r => r.appointment_time);
+
+      const slots = generateSlots(duration);
+      const hasAvailable = slots.some(slot => isSlotAvailable(slot, duration, taken));
+
+      if (hasAvailable) {
+        availableDates.push(dateStr);
+      }
+    }
+
+    res.status(200).json(availableDates);
+  } catch (err) {
+    console.error('❌ Error fetching available dates:', err);
+    res.status(500).json({ error: 'Failed to fetch available dates' });
   }
 });
 

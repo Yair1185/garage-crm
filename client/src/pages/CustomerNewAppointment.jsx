@@ -1,4 +1,3 @@
-// ✅ client/src/pages/CustomerNewAppointment.jsx
 import React, { useState, useEffect } from 'react';
 import { createAppointment, cancelAppointment } from '../api/appointments';
 import axios from 'axios';
@@ -11,6 +10,10 @@ export default function CustomerNewAppointment() {
   const [appointmentTime, setAppointmentTime] = useState('');
   const [serviceType, setServiceType] = useState('');
   const [message, setMessage] = useState('');
+  const [cachedSlots, setCachedSlots] = useState([]);
+  const [availableDates, setAvailableDates] = useState([]);
+  const [isLoadingSlots, setIsLoadingSlots] = useState(false);
+
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -31,6 +34,46 @@ export default function CustomerNewAppointment() {
       .catch(() => setMessage('שגיאה בטעינת הרכבים'));
   }, []);
 
+  useEffect(() => {
+    if (!serviceType) return;
+
+    setIsLoadingSlots(true);
+    axios
+      .get(`https://garage-crm-app.onrender.com/appointments/cached-slots`, {
+        params: { serviceType },
+        withCredentials: true,
+      })
+      .then((res) => {
+        setCachedSlots(res.data || []);
+      })
+      .catch(() => {
+        setCachedSlots([]);
+      })
+      .finally(() => {
+        setIsLoadingSlots(false);
+      });
+  }, [serviceType]);
+
+  useEffect(() => {
+    if (cachedSlots.length > 0 || !serviceType) return;
+
+    setIsLoadingSlots(true);
+    axios
+      .get('https://garage-crm-app.onrender.com/appointments/available-dates', {
+        params: { serviceType },
+        withCredentials: true,
+      })
+      .then((res) => {
+        setAvailableDates(res.data || []);
+      })
+      .catch(() => {
+        setAvailableDates([]);
+      })
+      .finally(() => {
+        setIsLoadingSlots(false);
+      });
+  }, [cachedSlots, serviceType]);
+
   const getAvailableHours = () => {
     const options = [];
     if (!appointmentDate || !serviceType) return options;
@@ -47,7 +90,6 @@ export default function CustomerNewAppointment() {
     if (day === 5 && duration > 2) return []; // שישי - רק טיפול קטן/גדול
 
     const openingHour = 7;
-    const openingMinute = 30;
     const closingHour = 14;
 
     for (let h = openingHour; h < closingHour; h++) {
@@ -107,32 +149,6 @@ export default function CustomerNewAppointment() {
           </div>
 
           <div className="mb-3 text-end">
-            <label className="form-label">תאריך</label>
-            <input
-              type="date"
-              className="form-control"
-              value={appointmentDate}
-              onChange={(e) => setAppointmentDate(e.target.value)}
-              required
-            />
-          </div>
-
-          <div className="mb-3 text-end">
-            <label className="form-label">שעה</label>
-            <select
-              className="form-select"
-              value={appointmentTime}
-              onChange={(e) => setAppointmentTime(e.target.value)}
-              required
-            >
-              <option value="">בחר שעה</option>
-              {getAvailableHours().map((hour) => (
-                <option key={hour} value={hour}>{hour}</option>
-              ))}
-            </select>
-          </div>
-
-          <div className="mb-3 text-end">
             <label className="form-label">סוג השירות</label>
             <select className="form-select" value={serviceType} onChange={(e) => setServiceType(e.target.value)} required>
               <option value="">בחר שירות</option>
@@ -142,6 +158,71 @@ export default function CustomerNewAppointment() {
               <option value="תקלה">תקלה (3 שעות)</option>
             </select>
           </div>
+
+          {cachedSlots.length > 0 ? (
+            <div className="mb-3 text-end">
+              <label className="form-label">בחר תור זמין</label>
+              <select
+                className="form-select"
+                value={`${appointmentDate}|${appointmentTime}`}
+                onChange={(e) => {
+                  const [date, time] = e.target.value.split('|');
+                  setAppointmentDate(date);
+                  setAppointmentTime(time);
+                }}
+                required
+              >
+                <option value="">בחר תור</option>
+                {cachedSlots.map((slot, index) => (
+                  <option key={index} value={`${slot.appointment_date}|${slot.appointment_time}`}>
+                    {new Date(slot.appointment_date).toLocaleDateString('he-IL')} בשעה {slot.appointment_time.slice(0, 5)}
+                  </option>
+                ))}
+              </select>
+            </div>
+          ) : (
+            <>
+              <div className="mb-3 text-end">
+                <label className="form-label">בחר תאריך</label>
+                {isLoadingSlots ? (
+                  <div className="alert alert-info text-center">המערכת מחפשת לך תאריכים פנויים...</div>
+                ) : availableDates.length > 0 ? (
+                  <select
+                    className="form-select"
+                    value={appointmentDate}
+                    onChange={(e) => setAppointmentDate(e.target.value)}
+                    required
+                  >
+                    <option value="">בחר תאריך</option>
+                    {availableDates.map((date) => (
+                      <option key={date} value={date}>
+                        {new Date(date).toLocaleDateString('he-IL')}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <div className="alert alert-warning text-center">לא נמצאו תאריכים זמינים</div>
+                )}
+              </div>
+
+              {appointmentDate && (
+                <div className="mb-3 text-end">
+                  <label className="form-label">בחר שעה</label>
+                  <select
+                    className="form-select"
+                    value={appointmentTime}
+                    onChange={(e) => setAppointmentTime(e.target.value)}
+                    required
+                  >
+                    <option value="">בחר שעה</option>
+                    {getAvailableHours().map((hour) => (
+                      <option key={hour} value={hour}>{hour}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
+            </>
+          )}
 
           <button type="submit" className="btn btn-primary w-100 rounded-pill">
             {editMode ? 'עדכן תור' : 'קבע תור'}
